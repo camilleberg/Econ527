@@ -4,23 +4,56 @@
 % Due: April 21, 2026
 % Last Edited: April 8, 2026
 
+
 %% Part 1: AR(1) approximation
-n_z = 9; % number of grid points for z
+N = 9; % number of grid points for z
 rho = 0.99; % persistence parameter
 sigma = 0.2; % standard deviation of the error term
 q = 3; % number of standard deviations to cover in the grid
-z_grid = linspace(-q*sigma, q*sigma, n_z); % grid for z w q st devs
-disp('Grid for z:');
-disp(z_grid);
+
+% Tauchen's method
+[Z_tauchen, Zprob_tauchen] = tauchen(N, 0, rho, sigma, q);
+disp('Tauchen method:');
+disp('Grid points:');
+disp(Z_tauchen);
+disp('Transition probabilities:');
+disp(Zprob_tauchen);    
 
 %% Part 2: Simulate histories 
-P = dtmc(z_grid); 
-disp(P)
-T = 1000; % number of time periods
-z_sim = zeros(T, 1); % pre-allocate for z
 
-X = simulate(mc,numSteps); % simulate Markov chain to get indices of z_grid
-z_sim = simulate_ar1(rho, sigma, T); % simulate AR(1) process
+% calculating the invariant distribution
+invar_dist= mc_invdist(Zprob_tauchen);
+disp('Invariant distribution:');
+disp(invar_dist);
+
+n_duration = 1000; % number of periods to simulate
+n_sim = 1000; % number of simulations
+dtmc_tauchen = dtmc(Zprob_tauchen); % create a discrete-time Markov chain object
+
+%figure;
+%graphplot(dtmc_tauchen,'ColorEdges',true);
+
+% Simulate the Markov chain
+parfor i = 1:n_sim
+    xo = find(rand < cumsum(invar_dist), 1); % initial state drawn from invariant distribution
+    X(:, i) = simulate(dtmc_tauchen, n_duration);
+end
+
+% figure;
+% simplot(dtmc_tauchen,X)
+
+% (a) First-order autocorrelation: cor(xt,xt−1)
+x_acf = autocorr(X); % compute autocorrelation function up to lag 1
+disp('First-order autocorrelation:');
+disp(x_acf); % autocorrelation at lag 1
+
+% (b) Unconditional variance: var(xt)
+% (c) First-order autocovariance: cov(xt,xt−1)
+% (d) Conditional variance: var(xt|xt−1) = var(εt)
+
+
+
+
 
 
 
