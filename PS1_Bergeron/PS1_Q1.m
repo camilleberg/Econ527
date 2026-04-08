@@ -9,9 +9,19 @@ n_z = 9; % number of grid points for z
 rho = 0.99; % persistence parameter
 sigma = 0.2; % standard deviation of the error term
 q = 3; % number of standard deviations to cover in the grid
-z_grid = linspace(-q*sigma, q*sigma, n_z); % grid for z w 3 st devs
+z_grid = linspace(-q*sigma, q*sigma, n_z); % grid for z w q st devs
 disp('Grid for z:');
 disp(z_grid);
+
+%% Part 2: Simulate histories 
+P = dtmc(z_grid); 
+disp(P)
+T = 1000; % number of time periods
+z_sim = zeros(T, 1); % pre-allocate for z
+
+X = simulate(mc,numSteps); % simulate Markov chain to get indices of z_grid
+z_sim = simulate_ar1(rho, sigma, T); % simulate AR(1) process
+
 
 
 
