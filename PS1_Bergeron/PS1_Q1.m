@@ -1,4 +1,4 @@
-% Econ 527 Spring 2026
+% Econ 527 Spring 2026 Question 1
 % Professor Greaney
 % Written by: Camille Bergeron
 % Due: April 21, 2026
