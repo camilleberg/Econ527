@@ -51,11 +51,17 @@ grid on;
 saveas(gcf,'spline_interpolation.fig')
 saveas(gcf,'spline_interpolation.png')
 
-%% Part 2: Polynomial grid
+%% Part 3: Polynomial grid
+
+% function to create polynomial grid
+function c_grid_poly = polynomial_grid(point_a, point_b, nodes, curve)
+    c_grid_normalized = linspace(0, 1, nodes); % normalized grid in [0,1]
+    c_grid_poly = point_a + (point_b - point_a) * c_grid_normalized.^curve; % polynomial transformation
+end
 
 % creating polynomilial grid for consumption
 curve = 3; % curvature parameter for polynomial grid
-c_grid_poly = 0.1 + (30-0.1)* c_grid.^curve; % polynomial grid transformation
+c_grid_poly = polynomial_grid(0.1, 30, 1000, curve); % polynomial grid transformation
 disp('Polynomial consumption grid:');
 disp(c_grid_poly(1:10));    
 
@@ -74,12 +80,20 @@ error_poly = abs(u_original_poly - u_interp_poly); % absolute error between orig
 disp('Maximum error between original and interpolated utility values:');
 disp(max(error_poly));
 
+%% Part 4: Plotting
+
+% making new consumption grid to plot, with 100 nodes
+c_grid_plot = linspace(30, 40, 100); % new consumption grid for plotting
+u_grid_plot = crra_utility(c_grid_plot, gamma); % original utility values at the new grid for plotting
+u_interp_plot = ppval(spline_interp_poly, c_grid_plot); % interpolated utility
+
 % Plotting the original utility values and the new interpolated values
 figure;
 fplot(@(x) crra_utility(x, gamma), [30, 40], 'r-', 'DisplayName', 'Original Utility'); % original utility function
 hold on;
-plot(c_grid_interp_poly, u_interp_poly, 'b-', ...
-    'DisplayName', 'Spline Interpolationb Polynomial', Color='#DC94FF'); % spline interpolation   
+plot(c_grid_plot, u_interp_plot, 'b-', ...
+    'DisplayName', 'Spline Interpolation Polynomial', Color='#DC94FF'); % spline interpolation   
+xlim([30 40])
 xlabel('Consumption');
 ylabel('Utility');
 title('Utility Function and Spline Interpolation with Polynomial Grid, 30-40');
@@ -88,12 +102,20 @@ grid on;
 saveas(gcf,'spline_interpolation_poly1.png')
 saveas(gcf,'spline_interpolation_poly.fig')
 
+
+% making new gridpoint
+c_grid_plot = linspace(0.01, 0.1, 100); % new consumption grid for plotting
+u_grid_plot = crra_utility(c_grid_plot, gamma); % original utility values at the new grid for plotting
+u_interp_plot = ppval(spline_interp_poly, c_grid_plot); % interpolated utility values at the new grid for plotting
+
+
 % Plotting the original utility values and the new interpolated values
 figure;
 fplot(@(x) crra_utility(x, gamma), [0.01, 0.1], 'r-', 'DisplayName', 'Original Utility'); % original utility function
 hold on;
-plot(c_grid_interp_poly, u_interp_poly, 'b-', ...
-    'DisplayName', 'Spline Interpolationb Polynomial', Color='#DC94FF'); % spline interpolation   
+plot(c_grid_plot, u_interp_plot, 'b-', ...
+    'DisplayName', 'Spline Interpolation Polynomial', Color='#DC94FF'); % spline interpolation   
+xlim([0.01 0.1])
 xlabel('Consumption');
 ylabel('Utility');
 title('Utility Function and Spline Interpolation with Polynomial Grid, 0.01-0.1');
