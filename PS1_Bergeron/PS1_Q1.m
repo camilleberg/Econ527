@@ -100,7 +100,7 @@ calculate_variables(x_rouwenhorst, sigma);
 
 
 %% Part 3: Optional 
-q = 2.5
+q = 2.5;
 [Z_tauchen_new, Zprob_tauchen_new] = tauchen(N, 0, rho, sigma, q);
 disp('Tauchen method with q = 2.5:');
 disp('Grid points:');

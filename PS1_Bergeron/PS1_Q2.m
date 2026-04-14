@@ -40,6 +40,8 @@ disp(max(error));
 
 % Plotting the original utility values and the interpolated values
 figure;
+fig = figure;
+theme(fig, "light");
 fplot(@(x) crra_utility(x, gamma), [0.1, 30], 'r-', 'DisplayName', 'Original Utility'); % original utility function
 hold on;
 plot(c_grid_interp, u_interp, 'b-', 'DisplayName', 'Spline Interpolation'); % spline interpolation
@@ -89,6 +91,8 @@ u_interp_plot = ppval(spline_interp_poly, c_grid_plot); % interpolated utility
 
 % Plotting the original utility values and the new interpolated values
 figure;
+fig = figure;
+theme(fig, "light");
 fplot(@(x) crra_utility(x, gamma), [30, 40], 'r-', 'DisplayName', 'Original Utility'); % original utility function
 hold on;
 plot(c_grid_plot, u_interp_plot, 'b-', ...
@@ -99,8 +103,8 @@ ylabel('Utility');
 title('Utility Function and Spline Interpolation with Polynomial Grid, 30-40');
 legend;
 grid on;    
-saveas(gcf,'spline_interpolation_poly1.png')
-saveas(gcf,'spline_interpolation_poly.fig')
+saveas(gcf,'spline_interpolation_poly_30-40.png')
+saveas(gcf,'spline_interpolation_poly_30-40.fig')
 
 
 % making new gridpoint
@@ -111,6 +115,8 @@ u_interp_plot = ppval(spline_interp_poly, c_grid_plot); % interpolated utility v
 
 % Plotting the original utility values and the new interpolated values
 figure;
+fig = figure;
+theme(fig, "light");
 fplot(@(x) crra_utility(x, gamma), [0.01, 0.1], 'r-', 'DisplayName', 'Original Utility'); % original utility function
 hold on;
 plot(c_grid_plot, u_interp_plot, 'b-', ...
@@ -121,8 +127,9 @@ ylabel('Utility');
 title('Utility Function and Spline Interpolation with Polynomial Grid, 0.01-0.1');
 legend;
 grid on;    
-saveas(gcf,'spline_interpolation_poly2.png')
-saveas(gcf,'spline_interpolation_poly2.fig')
+saveas(gcf,'spline_interpolation_poly_0.01-0.1.png')
+saveas(gcf,'spline_interpolation_poly_0.01-0.1.fig')
 
 
-%% Part 3: 
+%% Saving results
+% publish('PS1_Q2.m', 'pdf')
