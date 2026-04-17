@@ -1,0 +1,362 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Part 1: AR(1) approximation
+   \item Part 2: Simulate histories
+   \item Rouwenhorst Method
+   \item Part 3: Optional
+   \item Theoretical values
+\end{itemize}
+\begin{verbatim}
+% Econ 527 Spring 2026 Question 1
+% Professor Greaney
+% Written by: Camille Bergeron
+% Due: April 21, 2026
+% Last Edited: April 8, 2026
+\end{verbatim}
+
+
+\subsection*{Part 1: AR(1) approximation}
+
+\begin{verbatim}
+N = 9;      % number of grid points for z
+rho = 0.99; % persistence parameter
+sigma = 0.2; % standard deviation of the error term
+q = 3;      % number of standard deviations to cover in the grid
+
+% Tauchen's method
+[Z_tauchen, Zprob_tauchen] = tauchen(N, 0, rho, sigma, q);
+disp('Tauchen method:');
+disp('Grid points:'); disp(Z_tauchen);
+disp('Transition probabilities:'); disp(Zprob_tauchen);
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Tauchen method:
+Grid points:
+   -4.2533
+   -3.1900
+   -2.1266
+   -1.0633
+         0
+    1.0633
+    2.1266
+    3.1900
+    4.2533
+
+Transition probabilities:
+  Columns 1 through 7
+
+    0.9928    0.0072    0.0000         0         0         0         0
+    0.0024    0.9914    0.0062    0.0000         0         0         0
+    0.0000    0.0028    0.9918    0.0054    0.0000         0         0
+    0.0000    0.0000    0.0033    0.9921    0.0046    0.0000         0
+    0.0000    0.0000    0.0000    0.0039    0.9921    0.0039    0.0000
+    0.0000    0.0000    0.0000    0.0000    0.0046    0.9921    0.0033
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0054    0.9918
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0000    0.0062
+         0    0.0000    0.0000    0.0000    0.0000    0.0000    0.0000
+
+  Columns 8 through 9
+
+         0         0
+         0         0
+         0         0
+         0         0
+         0         0
+    0.0000         0
+    0.0028    0.0000
+    0.9914    0.0024
+    0.0072    0.9928
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Part 2: Simulate histories}
+
+\begin{verbatim}
+function X = simulate_markov(Z_probs, n_duration, n_sim)
+
+    % Invariant distribution
+    invar_dist = mc_invdist(Z_probs);
+    disp('Invariant distribution:'); disp(invar_dist);
+
+    mc = dtmc(Z_probs);
+    n_states = size(Z_probs, 1);
+
+    % Plotting — create figure first, then plot into it
+    %fig = figure;
+    %theme(fig, "light");
+    %graphplot(mc, 'ColorEdges', true);
+    %varName = inputname(1);
+    %saveas(fig, varName + ".png");
+
+    % Simulate the Markov chain
+    X = zeros(n_duration + 1, n_sim); % pre-allocate X (not pX)
+    parfor i = 1:n_sim
+        x0_idx = find(rand < cumsum(invar_dist), 1);
+        x0 = zeros(1, n_states);
+        x0(x0_idx) = 1;
+        X(:, i) = simulate(mc, n_duration, 'X0', x0);
+    end
+end
+
+function [x_acf, x_var, x_acov1, x_cond_var] = calculate_variables(X, sigma)
+    % (a) First-order autocorrelation
+    x_autocor = autocorr(X(:));
+    x_acf = x_autocor(2);
+    disp('First-order autocorrelation:'); disp(x_acf);
+
+    % (b) Unconditional variance
+    x_var = var(X(:));
+    disp('Unconditional variance:'); disp(x_var);
+
+
+    % (c) First-order autocovariance
+    x_acov1 = x_acf * x_var;
+    disp('First-order autocovariance:');
+    disp('From autocorrelation * variance:'); disp(x_acov1);
+
+    % (d) Conditional variance
+    x_cond_var = sigma^2;
+    disp('Conditional variance:'); disp(x_cond_var);
+end
+
+n_duration = 1000;
+n_sim = 1000;
+
+x_tauchen = simulate_markov(Zprob_tauchen, n_duration, n_sim);
+vars_tauchen = calculate_variables(x_tauchen, sigma);
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Invariant distribution:
+    0.0185
+    0.0552
+    0.1206
+    0.1929
+    0.2256
+    0.1929
+    0.1206
+    0.0552
+    0.0185
+
+First-order autocorrelation:
+    0.9976
+
+Unconditional variance:
+    2.9414
+
+First-order autocovariance:
+From autocorrelation * variance:
+    2.9344
+
+Conditional variance:
+    0.0400
+
+\end{verbatim} \color{black}
+    
+        \color{lightgray} \begin{verbatim}Invariant distribution:
+    0.0039
+    0.0312
+    0.1094
+    0.2187
+    0.2734
+    0.2188
+    0.1094
+    0.0313
+    0.0039
+
+First-order autocorrelation:
+    0.9891
+
+Unconditional variance:
+    2.0062
+
+First-order autocovariance:
+From autocorrelation * variance:
+    1.9843
+
+Conditional variance:
+    0.0400
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Rouwenhorst Method}
+
+\begin{verbatim}
+[Z_rouwenhorst, Zprob_rouwenhorst] = rouwenhorst(rho, sigma, N);
+disp('Rouwenhorst method:');
+disp('Grid points:'); disp(Z_rouwenhorst);
+disp('Transition probabilities:'); disp(Zprob_rouwenhorst);
+
+x_rouwenhorst = simulate_markov(Zprob_rouwenhorst, n_duration, n_sim);
+vars_rouwenhorst = calculate_variables(x_rouwenhorst, sigma);
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Rouwenhorst method:
+Grid points:
+   -4.0100
+   -3.0075
+   -2.0050
+   -1.0025
+         0
+    1.0025
+    2.0050
+    3.0075
+    4.0100
+
+Transition probabilities:
+  Columns 1 through 7
+
+    0.9607    0.0386    0.0007    0.0000    0.0000    0.0000    0.0000
+    0.0048    0.9609    0.0338    0.0005    0.0000    0.0000    0.0000
+    0.0000    0.0097    0.9610    0.0290    0.0004    0.0000    0.0000
+    0.0000    0.0001    0.0145    0.9611    0.0241    0.0002    0.0000
+    0.0000    0.0000    0.0001    0.0193    0.9611    0.0193    0.0001
+    0.0000    0.0000    0.0000    0.0002    0.0241    0.9611    0.0145
+    0.0000    0.0000    0.0000    0.0000    0.0004    0.0290    0.9610
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0005    0.0338
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0000    0.0007
+
+  Columns 8 through 9
+
+    0.0000    0.0000
+    0.0000    0.0000
+    0.0000    0.0000
+    0.0000    0.0000
+    0.0000    0.0000
+    0.0001    0.0000
+    0.0097    0.0000
+    0.9609    0.0048
+    0.0386    0.9607
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Part 3: Optional}
+
+\begin{verbatim}
+q = 2.5;
+[Z_tauchen_new, Zprob_tauchen_new] = tauchen(N, 0, rho, sigma, q);
+disp('Tauchen method with q = 2.5:');
+disp('Grid points:'); disp(Z_tauchen_new);
+disp('Transition probabilities:'); disp(Zprob_tauchen_new);
+
+x_tauchen_new = simulate_markov(Zprob_tauchen_new, n_duration, n_sim);
+vars_tauchen_new = calculate_variables(x_tauchen_new, sigma);
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Tauchen method with q = 2.5:
+Grid points:
+   -3.5444
+   -2.6583
+   -1.7722
+   -0.8861
+         0
+    0.8861
+    1.7722
+    2.6583
+    3.5444
+
+Transition probabilities:
+  Columns 1 through 7
+
+    0.9792    0.0208    0.0000         0         0         0         0
+    0.0094    0.9719    0.0187    0.0000         0         0         0
+    0.0000    0.0106    0.9727    0.0167    0.0000         0         0
+    0.0000    0.0000    0.0119    0.9731    0.0150    0.0000         0
+    0.0000    0.0000    0.0000    0.0134    0.9733    0.0134    0.0000
+    0.0000    0.0000    0.0000    0.0000    0.0150    0.9731    0.0119
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0167    0.9727
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0000    0.0187
+    0.0000    0.0000    0.0000    0.0000    0.0000    0.0000    0.0000
+
+  Columns 8 through 9
+
+         0         0
+         0         0
+         0         0
+         0         0
+         0         0
+    0.0000         0
+    0.0106    0.0000
+    0.9719    0.0094
+    0.0208    0.9792
+
+Invariant distribution:
+    0.0322
+    0.0709
+    0.1245
+    0.1747
+    0.1955
+    0.1747
+    0.1245
+    0.0709
+    0.0322
+
+First-order autocorrelation:
+    0.9953
+
+Unconditional variance:
+    3.6842
+
+First-order autocovariance:
+From autocorrelation * variance:
+    3.6669
+
+Conditional variance:
+    0.0400
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Theoretical values}
+
+\begin{verbatim}
+actual_acf      = rho;
+actual_var      = sigma^2 / (1 - rho^2);
+actual_acov1    = rho * actual_var;
+actual_cond_var = sigma^2;
+
+vars_actual = [actual_acf, actual_var, actual_acov1, actual_acov2, actual_cond_var];
+disp('Theoretical values:'); disp(vars_actual);
+
+disp('Tauchen as ratio to theoretical:');
+disp(vars_tauchen ./ vars_actual);
+
+disp('Rouwenhorst as ratio to theoretical:');
+disp(vars_rouwenhorst ./ vars_actual);
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Theoretical values:
+    0.9900    2.0101    1.9899    1.9899    0.0400
+
+Tauchen as ratio to theoretical:
+    1.0077    0.4963    0.5013    0.5013   24.9407
+
+Rouwenhorst as ratio to theoretical:
+    0.9991    0.4921    0.4970    0.4970   24.7273
+
+\end{verbatim} \color{black}
+    
+
+
+\end{document}
+
