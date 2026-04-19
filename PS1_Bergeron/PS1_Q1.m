@@ -28,11 +28,11 @@ function X = simulate_markov(Z_probs, n_duration, n_sim)
     n_states = size(Z_probs, 1);
 
     % Plotting — create figure first, then plot into it
-    %fig = figure;
-    %theme(fig, "light");
-    %graphplot(mc, 'ColorEdges', true);
-    %varName = inputname(1);
-    %saveas(fig, varName + ".png");
+    fig = figure;
+    theme(fig, "light");
+    graphplot(mc, 'ColorEdges', true);
+    varName = inputname(1);
+    saveas(fig, "./figs/" + varName + ".png");
 
     % Simulate the Markov chain
     X = zeros(n_duration + 1, n_sim); % pre-allocate X (not pX)
@@ -104,3 +104,6 @@ disp(vars_tauchen ./ vars_actual);
 
 disp('Rouwenhorst as ratio to theoretical:');
 disp(vars_rouwenhorst ./ vars_actual);  
+
+disp('New Tauchen as ratio to theoretical:');
+disp(vars_tauchen_new ./ vars_actual);  

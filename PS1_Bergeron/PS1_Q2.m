@@ -43,16 +43,16 @@ disp(max(error));
 figure;
 fig = figure;
 theme(fig, "light");
-fplot(@(x) crra_utility(x, gamma), [0.1, 30], 'r-', 'DisplayName', 'Original Utility'); % original utility function
+fplot(@(x) crra_utility(x, gamma), [0.1, 30], 'r-', 'DisplayName', 'Original Utility', LineWidth=2); % original utility function
 hold on;
-plot(c_grid_interp, u_interp, 'b-', 'DisplayName', 'Spline Interpolation'); % spline interpolation
+plot(c_grid_interp, u_interp, 'b-', 'DisplayName', 'Spline Interpolation', LineWidth=2); % spline interpolation
 xlabel('Consumption');
 ylabel('Utility');
 title('Utility Function and Spline Interpolation');
 legend;
 grid on;    
-saveas(gcf,'spline_interpolation.fig')
-saveas(gcf,'spline_interpolation.png')
+saveas(gcf,'./figs/spline_interpolation.fig')
+saveas(gcf,'./figs/spline_interpolation.png')
 
 %% Part 3: Polynomial grid
 
@@ -94,18 +94,18 @@ u_interp_plot = ppval(spline_interp_poly, c_grid_plot); % interpolated utility
 figure;
 fig = figure;
 theme(fig, "light");
-fplot(@(x) crra_utility(x, gamma), [30, 40], 'r-', 'DisplayName', 'Original Utility'); % original utility function
+fplot(@(x) crra_utility(x, gamma), [30, 40], 'r-', 'DisplayName', 'Original Utility', LineWidth=3); % original utility function
 hold on;
 plot(c_grid_plot, u_interp_plot, 'b-', ...
-    'DisplayName', 'Spline Interpolation Polynomial', Color='#DC94FF'); % spline interpolation   
+    'DisplayName', 'Spline Interpolation Polynomial', Color='#DC94FF', LineWidth=3); % spline interpolation   
 xlim([30 40])
 xlabel('Consumption');
 ylabel('Utility');
 title('Utility Function and Spline Interpolation with Polynomial Grid, 30-40');
 legend;
 grid on;    
-saveas(gcf,'spline_interpolation_poly_30-40.png')
-saveas(gcf,'spline_interpolation_poly_30-40.fig')
+saveas(gcf,'./figs/spline_interpolation_poly_30-40.png')
+saveas(gcf,'./figs/spline_interpolation_poly_30-40.fig')
 
 
 % making new gridpoint
@@ -118,16 +118,16 @@ u_interp_plot = ppval(spline_interp_poly, c_grid_plot); % interpolated utility v
 figure;
 fig = figure;
 theme(fig, "light");
-fplot(@(x) crra_utility(x, gamma), [0.01, 0.1], 'r-', 'DisplayName', 'Original Utility'); % original utility function
+fplot(@(x) crra_utility(x, gamma), [0.01, 0.1], 'r-', 'DisplayName', 'Original Utility', LineWidth=3); % original utility function
 hold on;
 plot(c_grid_plot, u_interp_plot, 'b-', ...
-    'DisplayName', 'Spline Interpolation Polynomial', Color='#DC94FF'); % spline interpolation   
+    'DisplayName', 'Spline Interpolation Polynomial', Color='#DC94FF', LineWidth=3); % spline interpolation   
 xlim([0.01 0.1])
 xlabel('Consumption');
 ylabel('Utility');
 title('Utility Function and Spline Interpolation with Polynomial Grid, 0.01-0.1');
 legend;
 grid on;    
-saveas(gcf,'spline_interpolation_poly_0.01-0.1.png')
-saveas(gcf,'spline_interpolation_poly_0.01-0.1.fig')
+saveas(gcf,'./figs/spline_interpolation_poly_0.01-0.1.png')
+saveas(gcf,'./figs/spline_interpolation_poly_0.01-0.1.fig')
 

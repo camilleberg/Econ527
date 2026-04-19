@@ -101,11 +101,11 @@ function X = simulate_markov(Z_probs, n_duration, n_sim)
     n_states = size(Z_probs, 1);
 
     % Plotting — create figure first, then plot into it
-    %fig = figure;
-    %theme(fig, "light");
-    %graphplot(mc, 'ColorEdges', true);
-    %varName = inputname(1);
-    %saveas(fig, varName + ".png");
+    fig = figure;
+    theme(fig, "light");
+    graphplot(mc, 'ColorEdges', true);
+    varName = inputname(1);
+    saveas(fig, "./figs/" + varName + ".png");
 
     % Simulate the Markov chain
     X = zeros(n_duration + 1, n_sim); % pre-allocate X (not pX)
@@ -157,14 +157,14 @@ vars_tauchen = calculate_variables(x_tauchen, sigma);
     0.0185
 
 First-order autocorrelation:
-    0.9976
+    0.9977
 
 Unconditional variance:
-    2.9414
+    2.9974
 
 First-order autocovariance:
 From autocorrelation * variance:
-    2.9344
+    2.9906
 
 Conditional variance:
     0.0400
@@ -173,30 +173,32 @@ Conditional variance:
     
         \color{lightgray} \begin{verbatim}Invariant distribution:
     0.0039
-    0.0312
-    0.1094
-    0.2187
-    0.2734
-    0.2188
-    0.1094
     0.0313
+    0.1094
+    0.2188
+    0.2734
+    0.2187
+    0.1094
+    0.0312
     0.0039
 
 First-order autocorrelation:
-    0.9891
+    0.9890
 
 Unconditional variance:
-    2.0062
+    1.9829
 
 First-order autocovariance:
 From autocorrelation * variance:
-    1.9843
+    1.9610
 
 Conditional variance:
     0.0400
 
 \end{verbatim} \color{black}
     
+\includegraphics [width=4in]{PS1_Q1_01.eps}
+
 
 \subsection*{Rouwenhorst Method}
 
@@ -249,6 +251,8 @@ Transition probabilities:
 
 \end{verbatim} \color{black}
     
+\includegraphics [width=4in]{PS1_Q1_02.eps}
+
 
 \subsection*{Part 3: Optional}
 
@@ -315,17 +319,19 @@ First-order autocorrelation:
     0.9953
 
 Unconditional variance:
-    3.6842
+    3.5933
 
 First-order autocovariance:
 From autocorrelation * variance:
-    3.6669
+    3.5763
 
 Conditional variance:
     0.0400
 
 \end{verbatim} \color{black}
     
+\includegraphics [width=4in]{PS1_Q1_03.eps}
+
 
 \subsection*{Theoretical values}
 
@@ -343,18 +349,16 @@ disp(vars_tauchen ./ vars_actual);
 
 disp('Rouwenhorst as ratio to theoretical:');
 disp(vars_rouwenhorst ./ vars_actual);
+
+disp('New Tauchen as ratio to theoretical:');
+disp(vars_tauchen_new ./ vars_actual);
 \end{verbatim}
 
-        \color{lightgray} \begin{verbatim}Theoretical values:
-    0.9900    2.0101    1.9899    1.9899    0.0400
+        \color{lightgray} \begin{verbatim}Unrecognized function or variable 'actual_acov2'.
 
-Tauchen as ratio to theoretical:
-    1.0077    0.4963    0.5013    0.5013   24.9407
-
-Rouwenhorst as ratio to theoretical:
-    0.9991    0.4921    0.4970    0.4970   24.7273
-
-\end{verbatim} \color{black}
+Error in PS1_Q1 (line 99)
+vars_actual = [actual_acf, actual_var, actual_acov1, actual_acov2, actual_cond_var];
+                                                     ^^^^^^^^^^^^\end{verbatim} \color{black}
     
 
 
