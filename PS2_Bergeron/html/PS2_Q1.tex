@@ -1,23 +1,61 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Some other stuff
+   \item Part 1: Neoclassical Growth Model Setup
+   \item Anlaytical solution for the value function and policy function
+   \item Numerical solution using value function iteration
+\end{itemize}
+\begin{verbatim}
 % Econ 527 Spring 2026 Question 2
 % Professor Greaney
 % Written by: Camille Bergeron
-% Due: April 30, 2026
+% Due: April 23, 2026
 % Last Edited: April 20, 2026
+\end{verbatim}
 
+
+\subsection*{Some other stuff}
+
+\begin{verbatim}
+addpath("/Users/camillebergeron/Documents/GitHub/VFIToolkit-matlab")
 
 % Neoclassical Growth Model
+\end{verbatim}
 
-%% Part 1: Neoclassical Growth Model Setup
 
+\subsection*{Part 1: Neoclassical Growth Model Setup}
+
+\begin{verbatim}
 % paramters
 % for vfi
 Params.beta = 0.96; % discount factor
 Params.alpha = 0.35; % capital share
 Params.delta = 1; % depreciation rate
 Params.A = 1; % technology level
+\end{verbatim}
 
 
-%% Anlaytical solution for the value function and policy function
+\subsection*{Anlaytical solution for the value function and policy function}
+
+\begin{verbatim}
 b = Params.alpha / (1 - Params.alpha * Params.beta);
 a = (1/(1-Params.beta)) * log((Params.A/(1+Params.beta*b)) * ((Params.A*Params.beta*b)/(1+Params.beta*b))^(Params.beta*b));
 disp('Analytical value function: V(k) = a + b*log(k)');
@@ -27,12 +65,18 @@ disp(['b = ', num2str(b)]);
 % creating funcion for the analytical value function
 function V = analytical_value_function(k, a, b)
     V = a + b * log(k); % analytical value function
-end 
+end
+\end{verbatim}
 
+        \color{lightgray} \begin{verbatim}Analytical value function: V(k) = a + b*log(k)
+a = -24.0341
+b = 0.52711
+\end{verbatim} \color{black}
+    
 
+\subsection*{Numerical solution using value function iteration}
 
-%% Numerical solution using value function iteration
-
+\begin{verbatim}
 % parameters
 % for grid
 curve = 2; % curvature parameter for polynomial grid
@@ -40,7 +84,7 @@ nodes = 100; % number of grid points
 point_a = 0.1; % lower bound of the grid
 point_b = 10; % upper bound of the grid
 
-% for iteration 
+% for iteration
 e_stop = 1e-4; % convergence criterion
 
 % creating grid points for capital using polynomial transformation
@@ -58,7 +102,7 @@ disp(K_grid(1:10));
 function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
     spline_interp = spline(K_grid, V_grid); % create spline interpolation object
     V_interp = ppval(spline_interp, K_query); % evaluate spline interpolation at query points
-end 
+end
 
 % value function iteration
 V_grid = zeros(size(K_grid)); % initialize value function grid
@@ -66,7 +110,7 @@ policy_grid = zeros(size(K_grid)); % initialize policy function grid
 iteration = 0; % iteration counter
 error = Inf; % initialize error
 
-% running through loop 
+% running through loop
 while error > e_stop * (1-Params.beta) % continue until convergence
     V_grid_old = V_grid; % store old value function grid
     for i = 1:length(K_grid)
@@ -86,18 +130,30 @@ end
 disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
 disp('Optimal policy function (next period capital stock):');
 disp(policy_grid(1:10));
+\end{verbatim}
 
-%% Plotting the results
-% Plot value function
-figure;
-fig = figure;
-theme(fig, "light");
-plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
-hold on;
-plot(K_grid, analytical_value_function(K_grid, a, b), 'r--', 'LineWidth', 2);
-xlabel('Capital Stock (k)');
-ylabel('Value Function (V)');
-title('Value Function Iteration vs Analytical Solution');
-legend('Numerical VFI', 'Analytical Solution');
-grid on;    
-saveas(gcf, 'figs/Value_Function_Comparison.png');
+        \color{lightgray} \begin{verbatim}Capital grid points:
+  Columns 1 through 7
+
+    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
+
+  Columns 8 through 10
+
+    0.1495    0.1646    0.1818
+
+Value function iteration converged in 350 iterations.
+Optimal policy function (next period capital stock):
+  Columns 1 through 7
+
+    1.0091    1.0091    0.4646    0.4646    1.0091    1.0091    0.5040
+
+  Columns 8 through 10
+
+    0.5889    0.5889    0.5889
+
+\end{verbatim} \color{black}
+    
+
+
+\end{document}
+
