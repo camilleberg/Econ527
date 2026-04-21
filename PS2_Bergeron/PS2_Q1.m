@@ -1,4 +1,5 @@
-% Econ 527 Spring 2026 Question 2
+% Econ 527 Spring 2026 
+% HW 2 Question 1
 % Professor Greaney
 % Written by: Camille Bergeron
 % Due: April 30, 2026
@@ -42,12 +43,6 @@ point_b = 10; % upper bound of the grid
 
 % for iteration 
 e_stop = 1e-4; % convergence criterion
-
-% creating grid points for capital using polynomial transformation
-function grid_poly = polynomial_grid(point_a, point_b, nodes, curve)
-    grid_normalized = linspace(0, 1, nodes); % normalized grid in [0,1]
-    grid_poly = point_a + (point_b - point_a) * grid_normalized.^curve; % polynomial transformation
-end
 
 % creating capital grid using polynomial transformation
 K_grid = polynomial_grid(point_a, point_b, nodes, curve); % capital grid using polynomial transformation
