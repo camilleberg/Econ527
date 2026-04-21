@@ -56,9 +56,9 @@ disp(K_grid(1:10));
 
 % value function iteration
 V_grid = zeros(size(K_grid)); % initialize value function grid
-policy_grid = zeros(size(K_grid)); % initialize policy function grid
+policy_grid = ones(size(K_grid)); % initialize policy function grid
 iteration = 0; % iteration counter
-error = Inf; % initialize error
+err = Inf; % initialize error
 
 % making consumption function
 function c = consumption(k, k_next, Params)
@@ -67,33 +67,37 @@ function c = consumption(k, k_next, Params)
 end
 
 % utility function
-function u = utility(c, Params)
-    if c > 0
-        u = log(c); % utility from consumption using log utility function
-    else
-        u = -Inf; % assign negative infinity utility for non-positive consumption
-    end
-end 
+function u = utility(c)
+    u = -Inf(size(c));        % initialize all to -Inf
+    u(c > 0) = log(c(c > 0)); % only compute log where feasible
+end
+
 
 % running through loop 
-while error > Params.e_stop * (1-Params.beta) % continue until convergence
-    V_grid_old = V_grid; % store old value function grid
+while err > Params.e_stop * (1 - Params.beta)
+    V_grid_old = V_grid; % saving old grid
+
+    % looping oiver every state
     for i = 1:length(K_grid)
-        k = K_grid(i); % current capital stock
-        % compute the value of consuming all output and investing the rest
-        c = consumption(k, K_grid, Params); % consumption for each possible next period capital stock
-        u = utility(c, Params); % utility from consumption for each possible next period capital stock
+        k = K_grid(i);
+        c = consumption(k, K_grid, Params); % claculating consumption for all possible next period capital stocks
+        u = utility(c); % same for utility 
 
-        % calculating new value function for each possible next period capital stock
-        V_next = cubic_spline_interpolation(K_grid, V_grid_old, K_grid); % interpolate value function for next period capital stocks
-        total_value = u + Params.beta * V_next; % total value for each possible next period capital stock
+        % interpolating for next choice of k' 
+        V_next = cubic_spline_interpolation(K_grid, V_grid_old, K_grid); 
+        total_value = u + Params.beta * V_next; % calculating total value for each possible next period capital stock
 
-        % updating value function and policy function
-        [V_grid(i), policy_index] = max(total_value); % update value function and policy function
-        policy_grid(i) = K_grid(policy_index); % store optimal next period capital stock in policy grid
+        [V_grid(i), idx] = max(total_value); % gets max value for each choice of k' and the index of the optimal choice
+        policy_grid(i) = K_grid(idx); % saves policy grid 
     end
-    error = max(abs(V_grid - V_grid_old)); % compute maximum error between iterations
-    iteration = iteration + 1; % increment iteration counter
+
+    err = max(abs(V_grid - V_grid_old)); % check error 
+    iteration = iteration + 1;
+
+    % displaying every 50 
+    if mod(iteration, 50) == 0
+        disp(['Iteration: ', num2str(iteration), ', Error: ', num2str(err)]);
+    end
 end
 
 disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
