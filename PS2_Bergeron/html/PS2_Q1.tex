@@ -18,24 +18,19 @@
 
 \begin{itemize}
 \setlength{\itemsep}{-1ex}
-   \item Some other stuff
    \item Part 1: Neoclassical Growth Model Setup
    \item Anlaytical solution for the value function and policy function
    \item Numerical solution using value function iteration
+   \item Plotting the results
 \end{itemize}
 \begin{verbatim}
-% Econ 527 Spring 2026 Question 2
+% Econ 527 Spring 2026
+% HW 2 Question 1
 % Professor Greaney
 % Written by: Camille Bergeron
-% Due: April 23, 2026
+% Due: April 30, 2026
 % Last Edited: April 20, 2026
-\end{verbatim}
 
-
-\subsection*{Some other stuff}
-
-\begin{verbatim}
-addpath("/Users/camillebergeron/Documents/GitHub/VFIToolkit-matlab")
 
 % Neoclassical Growth Model
 \end{verbatim}
@@ -79,52 +74,68 @@ b = 0.52711
 \begin{verbatim}
 % parameters
 % for grid
-curve = 2; % curvature parameter for polynomial grid
-nodes = 100; % number of grid points
-point_a = 0.1; % lower bound of the grid
-point_b = 10; % upper bound of the grid
+Params.curve = 2; % curvature parameter for polynomial grid
+Params.nodes = 100; % number of grid points
+Params.point_a = 0.1; % lower bound of the grid
+Params.point_b = 10; % upper bound of the grid
 
 % for iteration
-e_stop = 1e-4; % convergence criterion
-
-% creating grid points for capital using polynomial transformation
-function grid_poly = polynomial_grid(point_a, point_b, nodes, curve)
-    grid_normalized = linspace(0, 1, nodes); % normalized grid in [0,1]
-    grid_poly = point_a + (point_b - point_a) * grid_normalized.^curve; % polynomial transformation
-end
+Params.e_stop = 1e-4; % convergence criterion
 
 % creating capital grid using polynomial transformation
-K_grid = polynomial_grid(point_a, point_b, nodes, curve); % capital grid using polynomial transformation
+K_grid = polynomial_grid(Params.point_a, Params.point_b, Params.nodes, Params.curve); % capital grid using polynomial transformation
 disp('Capital grid points:');
 disp(K_grid(1:10));
 
-% cubic spline interpolation for the value function
-function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
-    spline_interp = spline(K_grid, V_grid); % create spline interpolation object
-    V_interp = ppval(spline_interp, K_query); % evaluate spline interpolation at query points
-end
+% loop
+% evaluate inital guess with interpolatiion object
+% check absolute max error between old and new value function grids
+% vaerify convergence and reassign as diff
 
 % value function iteration
 V_grid = zeros(size(K_grid)); % initialize value function grid
-policy_grid = zeros(size(K_grid)); % initialize policy function grid
+policy_grid = ones(size(K_grid)); % initialize policy function grid
 iteration = 0; % iteration counter
-error = Inf; % initialize error
+err = Inf; % initialize error
+
+% making consumption function
+function c = consumption(k, k_next, Params)
+    c_possible = Params.A * k^Params.alpha - k_next + (1-Params.delta) * k; % possible consumption based on current capital, next period's capital, and production
+    c = max(0, c_possible); % ensure consumption is non-negative
+end
+
+% utility function
+function u = utility(c)
+    u = -Inf(size(c));        % initialize all to -Inf
+    u(c > 0) = log(c(c > 0)); % only compute log where feasible
+end
+
 
 % running through loop
-while error > e_stop * (1-Params.beta) % continue until convergence
-    V_grid_old = V_grid; % store old value function grid
+while err > Params.e_stop * (1 - Params.beta)
+    V_grid_old = V_grid; % saving old grid
+
+    % looping oiver every state
     for i = 1:length(K_grid)
-        k = K_grid(i); % current capital stock
-        % compute the value of consuming all output and investing the rest
-        consumption = Params.A * k^Params.alpha - K_grid; % consumption for each possible next period capital stock
-        utility = log(consumption); % utility from consumption
-        V_next = cubic_spline_interpolation(K_grid, V_grid_old, K_grid); % interpolate value function for next period capital stocks
-        total_value = utility + Params.beta * V_next; % total value for each possible next period capital stock
-        [V_grid(i), policy_index] = max(total_value); % update value function and policy function
-        policy_grid(i) = K_grid(policy_index); % store optimal next period capital stock in policy grid
+        k = K_grid(i);
+        c = consumption(k, K_grid, Params); % claculating consumption for all possible next period capital stocks
+        u = utility(c); % same for utility
+
+        % interpolating for next choice of k'
+        V_next = cubic_spline_interpolation(K_grid, V_grid_old, K_grid);
+        total_value = u + Params.beta * V_next; % calculating total value for each possible next period capital stock
+
+        [V_grid(i), idx] = max(total_value); % gets max value for each choice of k' and the index of the optimal choice
+        policy_grid(i) = K_grid(idx); % saves policy grid
     end
-    error = max(abs(V_grid - V_grid_old)); % compute maximum error between iterations
-    iteration = iteration + 1; % increment iteration counter
+
+    err = max(abs(V_grid - V_grid_old)); % check error
+    iteration = iteration + 1;
+
+    % displaying every 50
+    if mod(iteration, 50) == 0
+        disp(['Iteration: ', num2str(iteration), ', Error: ', num2str(err)]);
+    end
 end
 
 disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
@@ -141,18 +152,49 @@ disp(policy_grid(1:10));
 
     0.1495    0.1646    0.1818
 
-Value function iteration converged in 350 iterations.
+Iteration: 50, Error: 0.13611
+Iteration: 100, Error: 0.017678
+Iteration: 150, Error: 0.0022961
+Iteration: 200, Error: 0.00029824
+Iteration: 250, Error: 3.8737e-05
+Iteration: 300, Error: 5.0313e-06
+Value function iteration converged in 306 iterations.
 Optimal policy function (next period capital stock):
   Columns 1 through 7
 
-    1.0091    1.0091    0.4646    0.4646    1.0091    1.0091    0.5040
+    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
 
   Columns 8 through 10
 
-    0.5889    0.5889    0.5889
+    0.1646    0.1818    0.1818
 
 \end{verbatim} \color{black}
     
+
+\subsection*{Plotting the results}
+
+\begin{par}
+Plot value function
+\end{par} \vspace{1em}
+\begin{verbatim}
+figure;
+fig = figure;
+theme(fig, "light");
+plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
+hold on;
+plot(K_grid, analytical_value_function(K_grid, a, b), 'r--', 'LineWidth', 2);
+xlabel('Capital Stock (k)');
+ylabel('Value Function (V)');
+title('Value Function Iteration vs Analytical Solution');
+legend('Numerical VFI', 'Analytical Solution');
+grid on;
+saveas(gcf, 'figs/Value_Function_Comparison.png');
+\end{verbatim}
+
+\includegraphics [width=4in]{PS2_Q1_01.eps}
+
+\includegraphics [width=4in]{PS2_Q1_02.eps}
+
 
 
 \end{document}
