@@ -19,16 +19,11 @@ Params.A = 1; % technology level
 
 
 %% Anlaytical solution for the value function and policy function
-b = Params.alpha / (1 - Params.alpha * Params.beta);
-a = (1/(1-Params.beta)) * log((Params.A/(1+Params.beta*b)) * ((Params.A*Params.beta*b)/(1+Params.beta*b))^(Params.beta*b));
+Params.b = Params.alpha / (1 - Params.alpha * Params.beta);
+Params.a = (1/(1-Params.beta)) * log((Params.A/(1+Params.beta*Params.b)) * ((Params.A*Params.beta*Params.b)/(1+Params.beta*Params.b))^(Params.beta*Params.b));
 disp('Analytical value function: V(k) = a + b*log(k)');
-disp(['a = ', num2str(a)]);
-disp(['b = ', num2str(b)]);
-
-% creating funcion for the analytical value function
-function V = analytical_value_function(k, a, b)
-    V = a + b * log(k); % analytical value function
-end 
+disp(['a = ', num2str(Params.a)]);
+disp(['b = ', num2str(Params.b)]);
 
 
 
@@ -56,8 +51,6 @@ function[K_grid, V_grid, policy_grid]= vfi_loop(Params, print_iter)
 
         % creating capital grid using polynomial transformation
     K_grid = polynomial_grid(Params.point_a, Params.point_b, Params.nodes, Params.curve); % capital grid using polynomial transformation
-    disp('Capital grid points:');
-    disp(K_grid(1:10));
 
     % value function iteration
     V_grid = zeros(size(K_grid)); % initialize value function grid
@@ -93,14 +86,28 @@ function[K_grid, V_grid, policy_grid]= vfi_loop(Params, print_iter)
         end
     end
 
-
-    disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
-    disp('Optimal policy function (next period capital stock):');
-    disp(policy_grid(1:10));
+    if print_iter == true
+        disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
+        disp('Optimal policy function (next period capital stock):');
+        disp(policy_grid(1:10));
+    end
 
 end
 
 [K_grid, V_grid, policy_grid] = vfi_loop(Params, true); % run the value function iteration loop
+
+% calculating the analytical value function for comparison
+V_analytical = analytical_value_function(K_grid, Params); % calculate analytical value function for comparison
+disp('Analytical value function at grid points:');
+disp(V_analytical(1:10));
+
+% calculaing max error between numerical and analytical policy functions
+policy_analytical = analytical_policy_function(K_grid, Params); % calculate analytical policy function for comparison
+disp('Analytical policy function at grid points:');
+disp(policy_analytical(1:10));
+max_policy_error = max(abs(policy_grid - policy_analytical)); % calculate maximum error between numerical and analytical policy functions
+disp(['Maximum error between numerical and analytical policy functions: ', num2str(max_policy_error)]);
+
 
 
 %% Checking timing 
@@ -114,7 +121,7 @@ fig = figure;
 theme(fig, "light");
 plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
 hold on;
-plot(K_grid, analytical_value_function(K_grid, a, b), 'r--', 'LineWidth', 2);
+plot(K_grid, V_analytical, 'r--', 'LineWidth', 2);
 xlabel('Capital Stock (k)');
 ylabel('Value Function (V)');
 title('Value Function Iteration vs Analytical Solution');
@@ -123,6 +130,15 @@ grid on;
 saveas(gcf, 'figs/Value_Function_Comparison.png');
 
 %% Local Functions
+
+% creating funcion for the analytical value function
+function V = analytical_value_function(k, Params)
+    V = Params.a + Params.b * log(k); % analytical value function
+end 
+
+function k_prime = analytical_policy_function(k, Params)
+    k_prime = Params.beta * Params.b *(Params.A * k.^Params.alpha +(1-Params.delta) * k) / (1 + Params.beta * Params.b); % analytical policy function
+end
 
 % making consumption function
 function c = consumption(k, k_next, Params)
@@ -135,3 +151,4 @@ function u = utility(c)
     u = -Inf(size(c));        % initialize all to -Inf
     u(c > 0) = log(c(c > 0)); % only compute log where feasible
 end
+
