@@ -23,6 +23,7 @@
    \item Numerical solution using value function iteration
    \item Checking timing
    \item Plotting the results
+   \item Analytical policy function and other questions
    \item Local Functions
 \end{itemize}
 \begin{verbatim}
@@ -53,16 +54,11 @@ Params.A = 1; % technology level
 \subsection*{Anlaytical solution for the value function and policy function}
 
 \begin{verbatim}
-b = Params.alpha / (1 - Params.alpha * Params.beta);
-a = (1/(1-Params.beta)) * log((Params.A/(1+Params.beta*b)) * ((Params.A*Params.beta*b)/(1+Params.beta*b))^(Params.beta*b));
+Params.b = Params.alpha / (1 - Params.alpha * Params.beta);
+Params.a = (1/(1-Params.beta)) * log((Params.A/(1+Params.beta*Params.b)) * ((Params.A*Params.beta*Params.b)/(1+Params.beta*Params.b))^(Params.beta*Params.b));
 disp('Analytical value function: V(k) = a + b*log(k)');
-disp(['a = ', num2str(a)]);
-disp(['b = ', num2str(b)]);
-
-% creating funcion for the analytical value function
-function V = analytical_value_function(k, a, b)
-    V = a + b * log(k); % analytical value function
-end
+disp(['a = ', num2str(Params.a)]);
+disp(['b = ', num2str(Params.b)]);
 \end{verbatim}
 
         \color{lightgray} \begin{verbatim}Analytical value function: V(k) = a + b*log(k)
@@ -96,8 +92,6 @@ function[K_grid, V_grid, policy_grid]= vfi_loop(Params, print_iter)
 
         % creating capital grid using polynomial transformation
     K_grid = polynomial_grid(Params.point_a, Params.point_b, Params.nodes, Params.curve); % capital grid using polynomial transformation
-    disp('Capital grid points:');
-    disp(K_grid(1:10));
 
     % value function iteration
     V_grid = zeros(size(K_grid)); % initialize value function grid
@@ -133,344 +127,20 @@ function[K_grid, V_grid, policy_grid]= vfi_loop(Params, print_iter)
         end
     end
 
-
-    disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
-    disp('Optimal policy function (next period capital stock):');
-    disp(policy_grid(1:10));
+    if print_iter == true
+        disp(['Value function iteration converged in ', num2str(iteration), ' iterations.']);
+        disp('Optimal policy function (next period capital stock):');
+        disp(policy_grid(1:10));
+    end
 
 end
 
 [K_grid, V_grid, policy_grid] = vfi_loop(Params, true); % run the value function iteration loop
-\end{verbatim}
 
-        \color{lightgray} \begin{verbatim}Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-\end{verbatim} \color{black}
-    
-
-\subsection*{Checking timing}
-
-\begin{verbatim}
-executionTime = timeit(@() vfi_loop(Params, false));
-disp(['Execution time for value function iteration: ', num2str(executionTime), ' seconds.']);
-\end{verbatim}
-
-        \color{lightgray} \begin{verbatim}Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Capital grid points:
-  Columns 1 through 7
-
-    0.1000    0.1010    0.1040    0.1091    0.1162    0.1253    0.1364
-
-  Columns 8 through 10
-
-    0.1495    0.1646    0.1818
-
-Value function iteration converged in 306 iterations.
-Optimal policy function (next period capital stock):
-  Columns 1 through 7
-
-    0.1495    0.1495    0.1495    0.1495    0.1646    0.1646    0.1646
-
-  Columns 8 through 10
-
-    0.1646    0.1818    0.1818
-
-Execution time for value function iteration: 1.7045 seconds.
-\end{verbatim} \color{black}
-    
-
-\subsection*{Plotting the results}
-
-\begin{par}
-Plot value function
-\end{par} \vspace{1em}
-\begin{verbatim}
-figure;
-fig = figure;
-theme(fig, "light");
-plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
-hold on;
-plot(K_grid, analytical_value_function(K_grid, a, b), 'r--', 'LineWidth', 2);
-xlabel('Capital Stock (k)');
-ylabel('Value Function (V)');
-title('Value Function Iteration vs Analytical Solution');
-legend('Numerical VFI', 'Analytical Solution');
-grid on;
-saveas(gcf, 'figs/Value_Function_Comparison.png');
-\end{verbatim}
-
-\includegraphics [width=4in]{PS2_Q1_01.eps}
-
-\includegraphics [width=4in]{PS2_Q1_02.eps}
-
-
-\subsection*{Local Functions}
-
-\begin{verbatim}
-% making consumption function
-function c = consumption(k, k_next, Params)
-    c_possible = Params.A * k^Params.alpha - k_next + (1-Params.delta) * k; % possible consumption based on current capital, next period's capital, and production
-    c = max(0, c_possible); % ensure consumption is non-negative
-end
-
-% utility function
-function u = utility(c)
-    u = -Inf(size(c));        % initialize all to -Inf
-    u(c > 0) = log(c(c > 0)); % only compute log where feasible
-end
+% calculating the analytical value function for comparison
+V_analytical = analytical_value_function(K_grid, Params); % calculate analytical value function for comparison
+disp('Analytical value function at grid points:');
+disp(V_analytical(1:10));
 \end{verbatim}
 
         \color{lightgray} \begin{verbatim}Iteration: 50, Error: 0.13611
@@ -488,6 +158,133 @@ Optimal policy function (next period capital stock):
   Columns 8 through 10
 
     0.1646    0.1818    0.1818
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Checking timing}
+
+\begin{verbatim}
+executionTime = timeit(@() vfi_loop(Params, false));
+disp(['Execution time for value function iteration: ', num2str(executionTime), ' seconds.']);
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Execution time for value function iteration: 1.1481 seconds.
+\end{verbatim} \color{black}
+    
+
+\subsection*{Plotting the results}
+
+\begin{par}
+Plot value function
+\end{par} \vspace{1em}
+\begin{verbatim}
+figure;
+fig = figure;
+theme(fig, "light");
+plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
+hold on;
+plot(K_grid, V_analytical, 'r--', 'LineWidth', 2);
+xlabel('Capital Stock (k)');
+ylabel('Value Function (V)');
+title('Value Function Iteration vs Analytical Solution');
+legend('Numerical VFI', 'Analytical Solution');
+grid on;
+saveas(gcf, 'figs/Value_Function_Comparison.png');
+\end{verbatim}
+
+\includegraphics [width=4in]{PS2_Q1_01.eps}
+
+\includegraphics [width=4in]{PS2_Q1_02.eps}
+
+
+\subsection*{Analytical policy function and other questions}
+
+\begin{verbatim}
+% calculaing max error between numerical and analytical policy functions
+policy_analytical = analytical_policy_function(K_grid, Params); % calculate analytical policy function for comparison
+disp('Analytical policy function at grid points:');
+disp(policy_analytical(1:10));
+max_policy_error = max(abs(policy_grid - policy_analytical)); % calculate maximum error between numerical and analytical policy functions
+disp(['Maximum error between numerical and analytical policy functions: ', num2str(max_policy_error)]);
+
+% does wealth grid bind?
+if any(policy_grid == Params.point_a) || any(policy_grid == Params.point_b)
+    disp('The wealth grid binds for some states.');
+    finding_binding_indices = find(policy_grid == Params.point_a | policy_grid == Params.point_b); % find indices where policy function binds to the grid
+    disp('The wealth grid binds at the following states:');
+    disp(K_grid(finding_binding_indices)); % display the capital stock levels where the grid binds
+else
+    disp('The wealth grid does not bind for any states.');
+end
+
+% when does agent start deaccumalting wealth
+% when k' < k?
+deaccumulation_indices = find(policy_grid < K_grid); % find indices where policy function indicates deaccumulation of wealth
+if ~isempty(deaccumulation_indices)
+    disp('The agent starts deaccumulating wealth at');
+    disp(K_grid(deaccumulation_indices(1))); % display the capital stock levels where deaccumulation starts
+else
+    disp('The agent does not deaccumulate wealth at any states.');
+end
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Analytical policy function at grid points:
+  Columns 1 through 7
+
+    0.1501    0.1506    0.1522    0.1547    0.1582    0.1624    0.1673
+
+  Columns 8 through 10
+
+    0.1728    0.1787    0.1850
+
+Maximum error between numerical and analytical policy functions: 0.027057
+The wealth grid does not bind for any states.
+The agent starts deaccumulating wealth at
+    0.2010
+
+
+ans =
+
+    0.0200
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Local Functions}
+
+\begin{verbatim}
+% creating funcion for the analytical value function
+function V = analytical_value_function(k, Params)
+    V = Params.a + Params.b * log(k); % analytical value function
+end
+
+% policy function
+function k_prime = analytical_policy_function(k, Params)
+    k_prime = Params.beta * Params.b *(Params.A * k.^Params.alpha +(1-Params.delta) * k) / (1 + Params.beta * Params.b); % analytical policy function
+end
+0.02
+% making consumption function
+function c = consumption(k, k_next, Params)
+    c_possible = Params.A * k^Params.alpha - k_next + (1-Params.delta) * k; % possible consumption based on current capital, next period's capital, and production
+    c = max(0, c_possible); % ensure consumption is non-negative
+end
+
+% utility function
+function u = utility(c)
+    u = -Inf(size(c));        % initialize all to -Inf
+    u(c > 0) = log(c(c > 0)); % only compute log where feasible
+end
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Analytical value function at grid points:
+  Columns 1 through 7
+
+  -25.2478  -25.2425  -25.2270  -25.2020  -25.1689  -25.1292  -25.0844
+
+  Columns 8 through 10
+
+  -25.0359  -24.9850  -24.9327
 
 \end{verbatim} \color{black}
     

@@ -103,7 +103,7 @@ disp(V_analytical(1:10));
 
 
 %% Checking timing 
-%executionTime = timeit(@() vfi_loop(Params, false));
+executionTime = timeit(@() vfi_loop(Params, false));
 %disp(['Execution time for value function iteration: ', num2str(executionTime), ' seconds.']);
 
 %% Plotting the results
