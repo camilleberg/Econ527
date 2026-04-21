@@ -36,24 +36,23 @@ end
 
 % parameters
 % for grid
-curve = 2; % curvature parameter for polynomial grid
-nodes = 100; % number of grid points
-point_a = 0.1; % lower bound of the grid
-point_b = 10; % upper bound of the grid
+Params.curve = 2; % curvature parameter for polynomial grid
+Params.nodes = 100; % number of grid points
+Params.point_a = 0.1; % lower bound of the grid
+Params.point_b = 10; % upper bound of the grid
 
 % for iteration 
-e_stop = 1e-4; % convergence criterion
+Params.e_stop = 1e-4; % convergence criterion
 
 % creating capital grid using polynomial transformation
-K_grid = polynomial_grid(point_a, point_b, nodes, curve); % capital grid using polynomial transformation
+K_grid = polynomial_grid(Params.point_a, Params.point_b, Params.nodes, Params.curve); % capital grid using polynomial transformation
 disp('Capital grid points:');
 disp(K_grid(1:10));
 
-% cubic spline interpolation for the value function
-function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
-    spline_interp = spline(K_grid, V_grid); % create spline interpolation object
-    V_interp = ppval(spline_interp, K_query); % evaluate spline interpolation at query points
-end 
+% loop
+% evaluate inital guess with interpolatiion object 
+% check absolute max error between old and new value function grids
+% vaerify convergence and reassign as diff
 
 % value function iteration
 V_grid = zeros(size(K_grid)); % initialize value function grid
@@ -61,16 +60,35 @@ policy_grid = zeros(size(K_grid)); % initialize policy function grid
 iteration = 0; % iteration counter
 error = Inf; % initialize error
 
+% making consumption function
+function c = consumption(k, k_next, Params)
+    c_possible = Params.A * k^Params.alpha - k_next + (1-Params.delta) * k; % possible consumption based on current capital, next period's capital, and production
+    c = max(0, c_possible); % ensure consumption is non-negative
+end
+
+% utility function
+function u = utility(c, Params)
+    if c > 0
+        u = log(c); % utility from consumption using log utility function
+    else
+        u = -Inf; % assign negative infinity utility for non-positive consumption
+    end
+end 
+
 % running through loop 
-while error > e_stop * (1-Params.beta) % continue until convergence
+while error > Params.e_stop * (1-Params.beta) % continue until convergence
     V_grid_old = V_grid; % store old value function grid
     for i = 1:length(K_grid)
         k = K_grid(i); % current capital stock
         % compute the value of consuming all output and investing the rest
-        consumption = Params.A * k^Params.alpha - K_grid; % consumption for each possible next period capital stock
-        utility = log(consumption); % utility from consumption
+        c = consumption(k, K_grid, Params); % consumption for each possible next period capital stock
+        u = utility(c, Params); % utility from consumption for each possible next period capital stock
+
+        % calculating new value function for each possible next period capital stock
         V_next = cubic_spline_interpolation(K_grid, V_grid_old, K_grid); % interpolate value function for next period capital stocks
-        total_value = utility + Params.beta * V_next; % total value for each possible next period capital stock
+        total_value = u + Params.beta * V_next; % total value for each possible next period capital stock
+
+        % updating value function and policy function
         [V_grid(i), policy_index] = max(total_value); % update value function and policy function
         policy_grid(i) = K_grid(policy_index); % store optimal next period capital stock in policy grid
     end

@@ -6,7 +6,7 @@ function [zgrid, P] = rouwenhorst(rho, sigma_eps, n)
 % Rouwenhorst's method for discretizing an AR(1) process
 %
 % rho: 1st order autocorrelation
-% sigma_eps: Standard deviation of the error term
+% sigma_eps: Stand3ard deviation of the error term
 % n: number of points in discrete approximation
 % zgrid: state vector
 % P: transition matrix
