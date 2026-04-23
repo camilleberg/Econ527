@@ -89,6 +89,26 @@ end
 time = toc;
 disp(['Value function iteration converged in ', num2str(iteration), ' iterations and took ', num2str(time), ' seconds']);
 
+%% Plotting Value and consumption functions
+% value function
+fig = figure;
+theme(fig, "light");
+plot(a_grid, V_grid, 'LineWidth', 2);
+xlabel('Wealth (a)');
+ylabel('Value Function (V)');
+title('Value Function Iteration ');
+grid on;    
+saveas(gcf, 'figs/Value_Function_IFP.png');
+
+% consumption
+fig = figure;
+theme(fig, "light");
+plot(a_grid, V_grid, 'LineWidth', 2);
+xlabel('Wealth (a)');
+ylabel('Value Function (V)');
+title('Value Function Iteration ');
+grid on;    
+saveas(gcf, 'figs/Value_Function_IFP.png');
 
 %% Local Functions
 
