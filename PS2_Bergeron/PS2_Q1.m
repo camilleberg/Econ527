@@ -108,7 +108,6 @@ disp(V_analytical(1:10));
 
 %% Plotting the results
 % Plot value function
-figure;
 fig = figure;
 theme(fig, "light");
 plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
@@ -162,7 +161,7 @@ end
 function k_prime = analytical_policy_function(k, Params)
     k_prime = Params.beta * Params.b *(Params.A * k.^Params.alpha +(1-Params.delta) * k) / (1 + Params.beta * Params.b); % analytical policy function
 end
-0.02
+
 % making consumption function
 function c = consumption(k, k_next, Params)
     c_possible = Params.A * k^Params.alpha - k_next + (1-Params.delta) * k; % possible consumption based on current capital, next period's capital, and production
