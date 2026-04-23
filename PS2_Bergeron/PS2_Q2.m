@@ -18,65 +18,56 @@ Params.gamma = 1.5; % risk aversion parameter
 Params.r = 0.02; % interest rate
 Params.a_min = 0; % minimum income level
 Params.a_max = 50; % maximum income level
-Params.a_nodes = 100; % number of grid points for wealth grid
+Params.n_a = 100; % number of grid points for wealth grid
 Params.curve = 2; % curvature parameter for polynomial grid
-Params.n = 5; % number of points in discrete approximation for income process
+Params.n_z = 5; % number of points in discrete approximation for income process
 Params.max_iter = 1000; % maximum number of iterations for value function iteration 
 Params.e_stop = 1e-4; % convergence criterion for value function iteration
 
 
 % creating polynomial wealth grid 
-a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.a_nodes, Params.curve); % income grid using polynomial transformation
+a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
 disp('Wealth grid points:');
 disp(a_grid(1:10));
 
 % using rouwenhorst method to discretize the AR(1) process for income
-[z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n); % discretized income grid and transition probabilities using Rouwenhorst's method
+[z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
 disp('Transition probabilities:'); disp(z_prob);
 
-% creating state space
-state_space = combinations(a_grid, z_grid); % creating state space as the Cartesian product of wealth grid and income grid
-disp('State space size:'); disp(size(state_space));
-disp('First 10 states:'); disp(state_space(1:10, :));
 
 %% Value Function Iteration
 
 % initialize value function and policy function
-V_grid = zeros(size(state_space, 1), 1); % initialize value function grid
-policy_grid = zeros(size(state_space, 1), 1); % initialize policy function grid
+V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
+policy_grid = zeros(Params.n_a, Params.n_z); % initialize policy function grid
 iteration = 0; % initialize iteration counter
 error = Inf; % initialize error for convergence check
 
 while error > Params.e_stop * (1-Params.beta) && iteration < Params.max_iter % continue until convergence or max iterations
 
     V_grid_old = V_grid; % store old value function grid for convergence check
-    V_next = cubic_spline_interpolation(a_grid, V_grid_old, a_grid); % interpolate value function for next period's wealth grid
 
-    for i = 1:size(state_space, 1) % loop over all states
-        a = state_space(i, 1); % current wealth
-        z = state_space(i, 2); % current income
+    for ia = 1:Params.n_a
+        a = a_grid(ia);
+        for iz = 1:Params.n_z
+            z = z_grid(iz)
 
-        % compute expected values
-        expected_values = zeros(size(a_grid)); % initialize expected values for each action
-        c = consumption(a{1,1}, z{1,1}, a_grid, Params); % compute consumption for each possible next period's wealth
-        u = utility(c, Params); % compute utility from consumption for each possible next period's wealth
+             % consumption for each possible next-period wealth choice
+             c_vec = (1 + Params.r) * a + z - a_grid; % (Na x 1)
 
-        % spline interpolation for next period's value function
-        
+             % utility 
+             u = utility(c, Params); % calcualting current utility
 
-        % compute expected value of next period's value function
-        EV_next = 0; % initialize expected value of next period's value function
-        for k = 1:length(z_grid) % loop over possible next period's income states
-            z_next = z_grid(k); % next period's income
-            P = z_prob(j, k); % transition probability from current to next income state
-            EV_next = EV_next + P * V_next(state_space == [a_next, z_next]); % sum over all possible next period's states
+             % interpolating 
+             V_next = cubic_spline_interpolation(a_grid, V_grid_old, a_grid); 
+
+             % continuation
+             EV = V_next * z_prob(iz, :); % calculating continuation
+             total_val = u + Params.beta * EV; % calculating ottla value based on current utility and discounted 
+
+             % optimizing
+             [V_grid(ia, iz), policy_grid(ia, iz)] = max(total_val);
         end
-        
-        expected_values = u + Params.beta * EV_next; % total expected value for current action
-
-        [V_grid(i), idx] = max(expected_values); % update value function and policy function for current state
-        policy_grid(i) = a_grid(idx); % store optimal next period's wealth as policy function
-
     end
 
     error = max(abs(V_grid - V_grid_old)); % compute maximum error between iterations
@@ -103,4 +94,13 @@ function u = utility(c, Params)
     else    
         u = -Inf; % assign negative infinity utility for non-positive consumption
     end 
+end 
+
+% cubic spline interpolation for the value function
+function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
+    % take as input K grid and corresponding V grid, and query points K_query
+    % K-query will be new guesses of K and will be updated
+    % will return interpolated value function at the query points
+    spline_interp = spline(K_grid, V_grid); % create spline interpolation object
+    V_interp = ppval(spline_interp, K_query); % evaluate spline interpolation at query points
 end 
