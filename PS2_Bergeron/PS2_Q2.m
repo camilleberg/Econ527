@@ -10,6 +10,8 @@
 
 %% Setting up Problem 
 
+tic; 
+
 % creating parameters
 Params.rho = 0.9; % persistence of income process
 Params.sigma = 0.2; % standard deviation of income shocks
@@ -50,57 +52,58 @@ while error > Params.e_stop * (1-Params.beta) && iteration < Params.max_iter % c
     for ia = 1:Params.n_a
         a = a_grid(ia);
         for iz = 1:Params.n_z
-            z = z_grid(iz)
+            z = z_grid(iz);
 
              % consumption for each possible next-period wealth choice
-             c_vec = (1 + Params.r) * a + z - a_grid; % (Na x 1)
+             c_vec = consumption(a, z, a_grid, Params); % (Na x 1)
 
              % utility 
-             u = utility(c, Params); % calcualting current utility
-
-             % interpolating 
-             V_next = cubic_spline_interpolation(a_grid, V_grid_old, a_grid); 
+             u = utility(c_vec, Params); % calcualting current utility
 
              % continuation
-             EV = V_next * z_prob(iz, :); % calculating continuation
-             total_val = u + Params.beta * EV; % calculating ottla value based on current utility and discounted 
+             EV = zeros(Params.n_a, 1); % NA x 1
+
+             % looping over all possible next income values 
+            for iz_next = 1:Params.n_z
+                % interpolate V(:, iz_next) at a_grid query points
+                V_next = cubic_spline_interpolation(a_grid, V_grid_old(:, iz_next), a_grid);
+                EV = EV + z_prob(iz, iz_next) * V_next; % (Na x 1)
+            end
+
+             total_val = u + Params.beta * EV; % NA x 1 
+             total_val = total_val(:);              % force column vector to be safe
 
              % optimizing
              [V_grid(ia, iz), policy_grid(ia, iz)] = max(total_val);
         end
     end
 
-    error = max(abs(V_grid - V_grid_old)); % compute maximum error between iterations
+    error = max(abs(V_grid - V_grid_old), [], 'all'); % compute maximum error between iterations
     iteration = iteration + 1; % increment iteration counter
 
+    if mod(iteration, 50) == 0 
+            disp(['Iteration: ', num2str(iteration), ', Error: ', num2str(error)]);
+    end
 end
 
+time = toc;
+disp(['Value function iteration converged in ', num2str(iteration), ' iterations and took ', num2str(time), ' seconds']);
 
 
 %% Local Functions
 
 % making consumption function 
-function c = consumption(a, z, a_next_grid, Params)
+function c = consumption(a, z, a_grid, Params)
     r = Params.r;
-    c_possible = (1 + r) * a + z - a_next_grid(:); % broadcasts to (N_a x N_z)
+    c_possible= (1 + Params.r) * a + z - a_grid;
     c = max(0, c_possible);
 end
 
 % utilty function
 function u = utility(c, Params)
-    gamma = Params.gamma; % risk aversion parameter
-    if c > 0
-        u = (c^(1-gamma)) / (1-gamma); % CRRA utility function
-    else    
-        u = -Inf; % assign negative infinity utility for non-positive consumption
-    end 
-end 
-
-% cubic spline interpolation for the value function
-function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
-    % take as input K grid and corresponding V grid, and query points K_query
-    % K-query will be new guesses of K and will be updated
-    % will return interpolated value function at the query points
-    spline_interp = spline(K_grid, V_grid); % create spline interpolation object
-    V_interp = ppval(spline_interp, K_query); % evaluate spline interpolation at query points
-end 
+    % Vectorized CRRA utility — handles (Na x 1) input
+    gamma = Params.gamma;
+    u        = -Inf(size(c));       % default: -Inf for c <= 0
+    pos      = c > 0;
+    u(pos)   = (c(pos).^(1 - gamma)) / (1 - gamma);
+end
