@@ -101,14 +101,25 @@ grid on;
 saveas(gcf, 'figs/Value_Function_IFP.png');
 
 % consumption
-fig = figure;
-theme(fig, "light");
-plot(a_grid, V_grid, 'LineWidth', 2);
-xlabel('Wealth (a)');
-ylabel('Value Function (V)');
-title('Value Function Iteration ');
+fig2 = figure;
+theme(fig2, "light");                       
+c_policy = zeros(Params.n_a, Params.n_z);             % FIX 2: compute consumption policy
+for iz = 1:Params.n_z
+    z = z_grid(iz);
+    for ia = 1:Params.n_a
+        a = a_grid(ia);
+        a_next = a_grid(policy_grid(ia, iz));         % recover next-period wealth from policy
+        c_policy(ia, iz) = (1 + Params.r) * a + z - a_next;
+    end
+end
+plot(a_grid, c_policy, 'LineWidth', 2);               
+xlabel('Wealth (a)');                                  
+ylabel('Consumption (c)');
+title('Consumption Policy Function');
+legend(arrayfun(@(i) sprintf('z_%d', i), 1:Params.n_z, 'UniformOutput', false), 'Location', 'best');
 grid on;    
-saveas(gcf, 'figs/Value_Function_IFP.png');
+saveas(gcf, 'figs/Consumption_Policy_IFP.png');       
+
 
 %% Local Functions
 
