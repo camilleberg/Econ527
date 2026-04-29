@@ -125,7 +125,6 @@ saveas(gcf, 'figs/Consumption_Policy_IFP.png');
 
 % making consumption function 
 function c = consumption(a, z, a_grid, Params)
-    r = Params.r;
     c_possible= (1 + Params.r) * a + z - a_grid;
     c = max(0, c_possible);
 end
@@ -137,4 +136,14 @@ function u = utility(c, Params)
     u        = -Inf(size(c));       % default: -Inf for c <= 0
     pos      = c > 0;
     u(pos)   = (c(pos).^(1 - gamma)) / (1 - gamma);
+end
+
+% cubic spline interpolation for the value function
+function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
+    % Replace -Inf with a large negative number for spline stability
+    V_grid_clean = V_grid;
+    V_grid_clean(~isfinite(V_grid_clean)) = -1e10;
+    
+    spline_interp = spline(K_grid, V_grid_clean);
+    V_interp = ppval(spline_interp, K_query);
 end
