@@ -124,18 +124,57 @@ ylabel('Consumption (c)');
 title('Consumption Policy Function');
 legend(arrayfun(@(i) sprintf('z_%d', i), 1:Params.n_z, 'UniformOutput', false), 'Location', 'best');
 grid on;    
-saveas(gcf, 'figs/Consumption_Policy_IFP.png');       
+saveas(gcf, 'figs/Consumption_Policy_IFP.png');    
+
+% Expected next period wealth against current wealth
+fig3 = figure;
+theme(fig3, "light");
+
+E_a_next = zeros(Params.n_a, 1);  % initialize expected next period wealth
+
+for ia = 1:Params.n_a
+    for iz = 1:Params.n_z
+        a_next = a_grid(policy_grid(ia, iz));           % optimal a' for this (a, iz) state
+        E_a_next(ia) = E_a_next(ia) + z_grid(iz) * a_next; % weight by stationary prob of z
+    end
+end
+
+plot(a_grid, E_a_next, 'b-', 'LineWidth', 2); hold on;
+plot(a_grid, a_grid, 'k--', 'LineWidth', 1.5);          % 45 degree line
+xlabel('Current Wealth (a)');
+ylabel('Expected Next Period Wealth E[a'']');
+title('Expected Next Period Wealth vs Current Wealth');
+legend('E[a''|a]', '45° line', 'Location', 'best');
+grid on;
+saveas(gcf, 'figs/Expected_Wealth_IFP.png');
+
+% find target wealth for each z state (where a' = a)
+fig4 = figure; theme(fig4, "light"); hold on;
+for iz = 1:Params.n_z
+    a_next_vec = a_grid(policy_grid(:, iz));
+    plot(a_grid, a_next_vec - a_grid, 'LineWidth', 2);
+end
+yline(0, 'k--', 'LineWidth', 1.5);
+xlabel('Wealth (a)'); ylabel("a' - a");
+title('Target Wealth: Carroll (1997) Buffer Stock');
+legend(arrayfun(@(i) sprintf('z_%d', i), 1:Params.n_z, 'UniformOutput', false));
+grid on;
+saveas(gcf, 'figs/Target_Wealth_IFP.png');
 
 % does wealth grid bind? 
-if any(policy_grid == Params.a_min, 'all') || any(policy_grid == Params.a_max, 'all')
-    
-    disp('The wealth grid binds for some states.');
-    finding_binding_indices = find(policy_grid == Params.a_min | policy_grid == Params.a_max);
-    disp('The wealth grid binds at the following states:');
-    disp(K_grid(finding_binding_indices)); % display the capital stock levels where the grid binds
-else
-    disp('The wealth grid does not bind for any states.');
-end
+%% Check if Wealth Grid is Binding
+
+% check lower bound -- are any households choosing a' = a_min?
+lower_bind = sum(policy_grid(:) == 1);           % count states where a' is at minimum grid point
+disp(['Number of (a,z) states at lower bound: ', num2str(lower_bind), ' out of ', num2str(Params.n_a * Params.n_z)]);
+
+% check upper bound -- are any households choosing a' = a_max?
+upper_bind = sum(policy_grid(:) == Params.n_a);  % count states where a' is at maximum grid point
+disp(['Number of (a,z) states at upper bound: ', num2str(upper_bind), ' out of ', num2str(Params.n_a * Params.n_z)]);
+
+% fraction of states at each bound
+disp(['Fraction at lower bound: ', num2str(lower_bind / (Params.n_a * Params.n_z))]);
+disp(['Fraction at upper bound: ', num2str(upper_bind / (Params.n_a * Params.n_z))]);
 
 
 %% Local Functions
