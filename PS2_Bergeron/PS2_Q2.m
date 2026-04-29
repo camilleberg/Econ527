@@ -74,7 +74,13 @@ while error > Params.e_stop * (1-Params.beta) && iteration < Params.max_iter % c
              total_val = total_val(:);              % force column vector to be safe
 
              % optimizing
-             [V_grid(ia, iz), policy_grid(ia, iz)] = max(total_val);
+             %[V_grid(ia, iz), policy_grid(ia, iz)] = max(total_val);
+
+             [V_grid(ia, iz), best_idx] = max(total_val);
+             if isempty(best_idx) || best_idx < 1 || best_idx > Params.n_a
+                best_idx = 1;  % fallback to minimum savings
+             end
+             policy_grid(ia, iz) = best_idx;
         end
     end
 
