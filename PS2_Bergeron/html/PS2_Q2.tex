@@ -1,4 +1,30 @@
-% Econ 527 Spring 2026 
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Setting up Problem
+   \item Value Function Iteration
+   \item Plotting Value and consumption functions
+   \item Local Functions
+\end{itemize}
+\begin{verbatim}
+% Econ 527 Spring 2026
 % HW 2 Question 2
 % Professor Greaney
 % Written by: Camille Bergeron
@@ -7,10 +33,13 @@
 
 
 % Income Fluctuations
+\end{verbatim}
 
-%% Setting up Problem 
 
-tic; 
+\subsection*{Setting up Problem}
+
+\begin{verbatim}
+tic;
 
 % creating parameters
 Params.rho = 0.9; % persistence of income process
@@ -23,11 +52,11 @@ Params.a_max = 50; % maximum income level
 Params.n_a = 100; % number of grid points for wealth grid
 Params.curve = 2; % curvature parameter for polynomial grid
 Params.n_z = 5; % number of points in discrete approximation for income process
-Params.max_iter = 1000; % maximum number of iterations for value function iteration 
+Params.max_iter = 1000; % maximum number of iterations for value function iteration
 Params.e_stop = 1e-4; % convergence criterion for value function iteration
 
 
-% creating polynomial wealth grid 
+% creating polynomial wealth grid
 a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
 disp('Wealth grid points:');
 disp(a_grid(1:10));
@@ -35,10 +64,30 @@ disp(a_grid(1:10));
 % using rouwenhorst method to discretize the AR(1) process for income
 [z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
 disp('Transition probabilities:'); disp(z_prob);
+\end{verbatim}
 
+        \color{lightgray} \begin{verbatim}Wealth grid points:
+  Columns 1 through 7
 
-%% Value Function Iteration
+         0    0.0051    0.0204    0.0459    0.0816    0.1275    0.1837
 
+  Columns 8 through 10
+
+    0.2500    0.3265    0.4132
+
+Transition probabilities:
+    0.8145    0.1715    0.0135    0.0005    0.0000
+    0.0429    0.8213    0.1290    0.0068    0.0001
+    0.0023    0.0860    0.8235    0.0860    0.0023
+    0.0001    0.0068    0.1290    0.8213    0.0429
+    0.0000    0.0005    0.0135    0.1715    0.8145
+
+\end{verbatim} \color{black}
+    
+
+\subsection*{Value Function Iteration}
+
+\begin{verbatim}
 % initialize value function and policy function
 V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
 policy_grid = zeros(Params.n_a, Params.n_z); % initialize policy function grid
@@ -57,20 +106,20 @@ while error > Params.e_stop * (1-Params.beta) && iteration < Params.max_iter % c
              % consumption for each possible next-period wealth choice
              c_vec = consumption(a, z, a_grid, Params); % (Na x 1)
 
-             % utility 
+             % utility
              u = utility(c_vec, Params); % calcualting current utility
 
              % continuation
              EV = zeros(Params.n_a, 1); % NA x 1
 
-             % looping over all possible next income values 
+             % looping over all possible next income values
             for iz_next = 1:Params.n_z
                 % interpolate V(:, iz_next) at a_grid query points
                 V_next = cubic_spline_interpolation(a_grid, V_grid_old(:, iz_next), a_grid);
                 EV = EV + z_prob(iz, iz_next) * V_next; % (Na x 1)
             end
 
-             total_val = u + Params.beta * EV; % NA x 1 
+             total_val = u + Params.beta * EV; % NA x 1
              total_val = total_val(:);              % force column vector to be safe
 
              % optimizing
@@ -87,28 +136,34 @@ while error > Params.e_stop * (1-Params.beta) && iteration < Params.max_iter % c
     error = max(abs(V_grid - V_grid_old), [], 'all'); % compute maximum error between iterations
     iteration = iteration + 1; % increment iteration counter
 
-    if mod(iteration, 50) == 0 
+    if mod(iteration, 50) == 0
             disp(['Iteration: ', num2str(iteration), ', Error: ', num2str(error)]);
     end
 end
 
 time = toc;
 disp(['Value function iteration converged in ', num2str(iteration), ' iterations and took ', num2str(time), ' seconds']);
+\end{verbatim}
 
-%% Plotting Value and consumption functions
-% value function
+
+\subsection*{Plotting Value and consumption functions}
+
+\begin{par}
+value function
+\end{par} \vspace{1em}
+\begin{verbatim}
 fig = figure;
 theme(fig, "light");
 plot(a_grid, V_grid, 'LineWidth', 2);
 xlabel('Wealth (a)');
 ylabel('Value Function (V)');
 title('Value Function Iteration ');
-grid on;    
+grid on;
 saveas(gcf, 'figs/Value_Function_IFP.png');
 
 % consumption
 fig2 = figure;
-theme(fig2, "light");                       
+theme(fig2, "light");
 c_policy = zeros(Params.n_a, Params.n_z);             % FIX 2: compute consumption policy
 for iz = 1:Params.n_z
     z = z_grid(iz);
@@ -118,29 +173,24 @@ for iz = 1:Params.n_z
         c_policy(ia, iz) = (1 + Params.r) * a + z - a_next;
     end
 end
-plot(a_grid, c_policy, 'LineWidth', 2);               
-xlabel('Wealth (a)');                                  
+plot(a_grid, c_policy, 'LineWidth', 2);
+xlabel('Wealth (a)');
 ylabel('Consumption (c)');
 title('Consumption Policy Function');
 legend(arrayfun(@(i) sprintf('z_%d', i), 1:Params.n_z, 'UniformOutput', false), 'Location', 'best');
-grid on;    
-saveas(gcf, 'figs/Consumption_Policy_IFP.png');       
+grid on;
+saveas(gcf, 'figs/Consumption_Policy_IFP.png');
+\end{verbatim}
 
-% does wealth grid bind? 
-if any(policy_grid == Params.a_min, 'all') || any(policy_grid == Params.a_max, 'all')
-    
-    disp('The wealth grid binds for some states.');
-    finding_binding_indices = find(policy_grid == Params.a_min | policy_grid == Params.a_max);
-    disp('The wealth grid binds at the following states:');
-    disp(K_grid(finding_binding_indices)); % display the capital stock levels where the grid binds
-else
-    disp('The wealth grid does not bind for any states.');
-end
+\includegraphics [width=4in]{PS2_Q2_01.eps}
+
+\includegraphics [width=4in]{PS2_Q2_02.eps}
 
 
-%% Local Functions
+\subsection*{Local Functions}
 
-% making consumption function 
+\begin{verbatim}
+% making consumption function
 function c = consumption(a, z, a_grid, Params)
     c_possible= (1 + Params.r) * a + z - a_grid;
     c = max(0, c_possible);
@@ -160,7 +210,27 @@ function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
     % Replace -Inf with a large negative number for spline stability
     V_grid_clean = V_grid;
     V_grid_clean(~isfinite(V_grid_clean)) = -1e10;
-    
+
     spline_interp = spline(K_grid, V_grid_clean);
     V_interp = ppval(spline_interp, K_query);
 end
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Iteration: 50, Error: 7532035.7912
+Iteration: 100, Error: 387283.0602
+Iteration: 150, Error: 22957.5148
+Iteration: 200, Error: 1453.1079
+Iteration: 250, Error: 95.6395
+Iteration: 300, Error: 6.43
+Iteration: 350, Error: 0.4375
+Iteration: 400, Error: 0.029966
+Iteration: 450, Error: 0.0020599
+Iteration: 500, Error: 0.00014198
+Iteration: 550, Error: 9.8348e-06
+Value function iteration converged in 568 iterations and took 62.2006 seconds
+\end{verbatim} \color{black}
+    
+
+
+\end{document}
+

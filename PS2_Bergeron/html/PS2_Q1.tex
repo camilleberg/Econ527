@@ -165,13 +165,10 @@ Optimal policy function (next period capital stock):
 \subsection*{Checking timing}
 
 \begin{verbatim}
-executionTime = timeit(@() vfi_loop(Params, false));
-disp(['Execution time for value function iteration: ', num2str(executionTime), ' seconds.']);
+%executionTime = timeit(@() vfi_loop(Params, false));
+%disp(['Execution time for value function iteration: ', num2str(executionTime), ' seconds.']);
 \end{verbatim}
 
-        \color{lightgray} \begin{verbatim}Execution time for value function iteration: 1.1481 seconds.
-\end{verbatim} \color{black}
-    
 
 \subsection*{Plotting the results}
 
@@ -179,7 +176,6 @@ disp(['Execution time for value function iteration: ', num2str(executionTime), '
 Plot value function
 \end{par} \vspace{1em}
 \begin{verbatim}
-figure;
 fig = figure;
 theme(fig, "light");
 plot(K_grid, V_grid, 'b-', 'LineWidth', 2);
@@ -194,8 +190,6 @@ saveas(gcf, 'figs/Value_Function_Comparison.png');
 \end{verbatim}
 
 \includegraphics [width=4in]{PS2_Q1_01.eps}
-
-\includegraphics [width=4in]{PS2_Q1_02.eps}
 
 
 \subsection*{Analytical policy function and other questions}
@@ -243,11 +237,6 @@ The wealth grid does not bind for any states.
 The agent starts deaccumulating wealth at
     0.2010
 
-
-ans =
-
-    0.0200
-
 \end{verbatim} \color{black}
     
 
@@ -263,7 +252,7 @@ end
 function k_prime = analytical_policy_function(k, Params)
     k_prime = Params.beta * Params.b *(Params.A * k.^Params.alpha +(1-Params.delta) * k) / (1 + Params.beta * Params.b); % analytical policy function
 end
-0.02
+
 % making consumption function
 function c = consumption(k, k_next, Params)
     c_possible = Params.A * k^Params.alpha - k_next + (1-Params.delta) * k; % possible consumption based on current capital, next period's capital, and production
