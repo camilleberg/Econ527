@@ -28,8 +28,8 @@ Params.max_iter = 1000; % maximum number of iterations for value function iterat
 Params.e_stop = 1e-4; % convergence criterion for value function iteration
 
 
-% creating polynomial wealth grid 
-a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
+% creating polynomial wealth grid EGM
+a_prime_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
 
 % using rouwenhorst method to discretize the AR(1) process for income
 [z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
@@ -37,14 +37,22 @@ a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); 
 
 %% Starting EGM 
 
+% initializing values
+V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
+a_grid_egm = zeros(Params.n_a, Params.n_z); % initialize policy function grid (a choices for each (a', iz) pair)
+    % this will be filled in with updating loops 
+
+
 %% 1. find a' 
 
  % VFI loop calculation to get V^{n+1} and a' grifd for each (a, iz) pair
 
+
+
 %% 2. given a' at (a, iz) find optimal a that maps to a'
 
 % backeards induction 
-
+[a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, a_prime_grid, a_grid_egm) ;
 
 % 3. sub into bellman equation 
 % 4. use interpolation 

@@ -56,7 +56,8 @@ results = [transpose(m_iter_bounds), zeros(length(m_iter_bounds), 1), zeros(leng
 for i = 1:length(m_iter_bounds)
     
     tic;
-    max_policy_iter = m_iter_bounds(i) % get max policy iteration for this loop
+    max_policy_iter = m_iter_bounds(i); % get max policy iteration for this loop
+    disp(['Running Howard policy improvement with max policy iterations = ', num2str(max_policy_iter), '...']);
 
     if isfile(['results/policy_grid_m_iter_', num2str(max_policy_iter), '.mat'])
         disp('File exists and skipping Howard policy improvement for this max policy iteration...');
@@ -70,7 +71,7 @@ for i = 1:length(m_iter_bounds)
         % save policy grid for this loop
         save(['results/policy_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'policy_grid');
         % save value grid for this loop
-        save(['value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
+        save(['results/value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
         
         time = toc; % saving time 
 
