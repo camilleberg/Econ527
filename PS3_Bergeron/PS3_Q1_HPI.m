@@ -70,7 +70,7 @@ for i = 1:length(m_iter_bounds)
         % save policy grid for this loop
         save(['results/policy_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'policy_grid');
         % save value grid for this loop
-        save(['value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
+        save(['results/value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
         
         time = toc; % saving time 
 
