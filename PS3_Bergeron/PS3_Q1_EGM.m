@@ -46,7 +46,7 @@ a_grid_egm = zeros(Params.n_a, Params.n_z); % initialize policy function grid (a
 %% 1. find a' 
 
  % VFI loop calculation to get V^{n+1} and a' grifd for each (a, iz) pair
-
+vfi
 
 
 %% 2. given a' at (a, iz) find optimal a that maps to a'
