@@ -11,6 +11,7 @@ function [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_
         % run regular VFI loop to get updated value and policy grids
         [V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_grid, V_grid_old, policy_grid);
 
+
         % checking error for convergence
         conv_error = max(abs(V_grid(:) - V_grid_old(:)));
 
