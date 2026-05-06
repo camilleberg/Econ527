@@ -3,7 +3,7 @@
 % Professor Greaney
 % Written by: Camille Bergeron
 % Due: May 08, 2026
-% Last Edited: May 05, 2026
+% Last Edited: May 06, 2026
 
 
 % Howard Policy Improvement
@@ -79,20 +79,10 @@ for i = 1:length(m_iter_bounds)
     end
 end
 
-
-
-%% Local Functions
-
-% making consumption function 
-function c = consumption(a, z, a_grid, Params)
-    c_possible = (1 + Params.r) * a + z - a_grid;
-    c = max(0, c_possible);
+if isfile('results/policy_improvement_results.csv')
+    disp(readmatrix('results/policy_improvement_results.csv')); % display results table
+else
+    disp('Results file not found.');
 end
+ 
 
-% utility function
-function u = utility(c, Params)
-    gamma = Params.gamma;
-    u        = -Inf(size(c));       % default: -Inf for c <= 0
-    pos      = c > 0;
-    u(pos)   = (c(pos).^(1 - gamma)) / (1 - gamma);
-end
