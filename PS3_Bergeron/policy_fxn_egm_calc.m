@@ -18,14 +18,17 @@ for ia_prime = 1:Params.n_a_prime
     for iz = 1:Params.n_z
         z= z_grid(iz); % current income 
 
-        % continuation values
-        EV = zeros(Params.n_a, 1); % NA x 1
+       % calculate current consumptio
+        c = consumption(a_prime, z, a_prime_grid, Params); 
+        % consumption for each (a', iz) pair using current endogenous grid a' and income z
+        % i.e. next period wealth choice a' and current income z determine current consumption c
 
-        % looping over all possible next income values 
-        for iz_next = 1:Params.n_z
-            % interpolate V(:, iz_next) at a_prime_grid query points
-            V_next = cubic_spline_interpolation(a_prime_grid, V_grid_old(:, iz_next), a_prime_grid);
-            EV = EV + z_prob(iz, iz_next) * V_next; % (Na x 1)
-        end 
+        up = utility_prime(c, Params); % marginal utility for each (a', iz) pair
+
+        % calculate expected marginal utility for each (a', iz) pair
+        up_exp = 0;
+        
+        
 
         % calcualting  
+        

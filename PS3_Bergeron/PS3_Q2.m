@@ -36,3 +36,4 @@ disp(a_grid(1:10));
 [z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
 disp('Transition probabilities:'); disp(z_prob);
 
+%% 

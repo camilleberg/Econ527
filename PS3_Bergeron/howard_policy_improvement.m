@@ -19,7 +19,7 @@ function [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_
             break;
         else
             % run policy iteration to update value function with fixed policy
-            [V_grid] = policy_iter(Params, z_grid, z_prob, a_grid, policy_grid, max_policy_iter, V_grid);
+            [V_grid] = policy_iter_new(Params, z_grid, z_prob, a_grid, policy_grid, max_policy_iter, V_grid);
         end
 
         iteration = iteration + 1;
