@@ -1,6 +1,6 @@
-function [a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, a_prime_grid, a_grid_egm) 
+function [a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, policy_grid, a_grid_egm) 
 
-% [[V_grid, a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, a_prime_grid,a_grid_egm)   
+% [a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, policy_grid, a_grid_egm)  
 %
 % value function iteration loop but for endgenous grid (V^{n+1}) and policy grid (a') for each (a, iz) pair
 % takes endogenous grid a' as input and calculates 
@@ -15,13 +15,13 @@ function [a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, a_prime_grid
 % solving for 
 % a(a', iz) = (a'-exp(z) + u'^-1[\beta * E_z(V(a', z') | iz)])/(1+r)
 
-for ia_prime = 1:Params.n_a_prime
-    a_prime = a_prime_grid(ia_prime); % current poly grid
+for ia_prime = 1:length(policy_grid(:)) % looping through each (a', iz) pair
+    a_prime = policy_grid(ia_prime); % current poly grid
     for iz = 1:Params.n_z
         z= z_grid(iz); % current income 
 
        % calculate current consumptio
-        c = consumption(a_prime, z, a_prime_grid, Params); 
+        c = consumption(a_prime, z, a_prime, Params); 
         % consumption for each (a', iz) pair using current endogenous grid a' and income z
         % i.e. next period wealth choice a' and current income z determine current consumption c
 

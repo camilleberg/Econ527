@@ -37,16 +37,32 @@ a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); 
 
 %% Starting EGM 
 
-%% 1. find a' 
+% 1. find a' 
+
+% initializing values
+V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
+policy_grid = zeros(Params.n_a, Params.n_z); % initialize policy function grid
+a_grid_egm = zeros(Params.n_a, Params.n_z); % initialize endogenous grid for a choices for each (a', iz) pair
+    % this is the new a choices given k'prime 
+
+V_grid_old = V_grid; % initialize old value grid for convergence check
 
  % VFI loop calculation to get V^{n+1} and a' grifd for each (a, iz) pair
+[V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_grid, V_grid_old, policy_grid);
 
-%% 2. given a' at (a, iz) find optimal a that maps to a'
-
-% backeards induction 
-
+% 2. given a' at (a, iz) find optimal a that maps to a'
+[a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, policy_grid, a_grid_egm);
 
 % 3. sub into bellman equation 
-% 4. use interpolation 
+
+% check if new a_grid_egm is within bounds of original a_grid, if not, we need to extrapolate V and policy grid to get values for a_grid_egm outside of original a_grid bounds
+%
+% psedo code 
+% if a_grid_edm(i) > a_min, them VFI calc with a_grid_egm as new grid and get new V_grid and policy_grid
+% else, update V_grid(i) to be the budget constraint i.e. using a_grid 
+
+
+a_grid_egm[a_grid_egm < Params.a_min] = Params.a_min; % set any a_grid_egm values below a_min to a_min
+
 
 

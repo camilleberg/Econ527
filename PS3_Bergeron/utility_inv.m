@@ -1,4 +1,4 @@
-function u_inv = utility_inv(c, Params); % (Na x 1)  
+function u_inv = utility_inv(c, Params) % (Na x 1)  
 
 % u_inv = utility_inv(c, Params); 
 %

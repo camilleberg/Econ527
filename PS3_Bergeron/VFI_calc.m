@@ -1,4 +1,4 @@
-function [V_grid, policy_grid] = vfi_calc(Params, z_grid, z_prob, a_grid, V_grid_old, policy_grid)
+function [V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_grid, V_grid_old, policy_grid)
 
 % [V_grid, policy_grid] = vfi_calc(Params, z_grid, z_prob, a_grid, V_grid_old, policy_grid)
 %
@@ -11,6 +11,9 @@ function [V_grid, policy_grid] = vfi_calc(Params, z_grid, z_prob, a_grid, V_grid
 % a_grid; current wealth grid
 % V_grid_old: current value function (V^n) for each (a, iz) pair
 % policy_grid: current policy grid (a' choices) for each (a, iz)
+
+% preallocatinig v_grid 
+V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
 
 
     % looping through each (a, iz pair)
