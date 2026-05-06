@@ -54,28 +54,29 @@ for i = 1:length(m_iter_bounds)
     tic;
     max_policy_iter = m_iter_bounds(i) % get max policy iteration for this loop
 
-    %if isfile('policy_grid_m_iter_' num2str(max_policy_iter) '.mat')
-     %   disp('File exists!')
-      %  break; % exit the loop if file exists
-    %else
-     %   disp('File does not exist. Running Howard policy improvement...');
-    %end
-    % running VFI
+    if isfile('results/policy_grid_m_iter_' num2str(max_policy_iter) '.mat')
+        disp('File exists and skipping Howard policy improvement...');
+       break; % exit the loop if file exists
+    else
+        disp('File does not exist. Running Howard policy improvement...');
+    
+        % running VFI
 
-    [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_grid, z_prob, a_grid, max_policy_iter, V_grid, policy_grid); % run VFI loop and get value and policy grids
+        [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_grid, z_prob, a_grid, max_policy_iter, V_grid, policy_grid); % run VFI loop and get value and policy grids
 
-    % save policy grid for this loop
-    save(['policy_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'policy_grid');
-    % save value grid for this loop
-    save(['value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
-    time = toc;
+        % save policy grid for this loop
+        save(['results/policy_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'policy_grid');
+        % save value grid for this loop
+        save(['value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
+        time = toc;
 
-    % updating results table
-    results(i, 2) = time; % store time in results table
-    results(i, 3) = iteration; % store number of iterations
-    writematrix(results, 'policy_improvement_results.csv');
+        % updating results table
+        results(i, 2) = time; % store time in results table
+        results(i, 3) = iteration; % store number of iterations
+        writematrix(results, 'results/policy_improvement_results.csv');
 
-    disp(['Completed Howard policy improvement with max policy iterations = ', num2str(max_policy_iter), ' in ', num2str(time), ' seconds']);
+        disp(['Completed Howard policy improvement with max policy iterations = ', num2str(max_policy_iter), ' in ', num2str(time), ' seconds']);
+    end
 end
 
 

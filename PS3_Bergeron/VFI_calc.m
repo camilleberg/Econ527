@@ -6,10 +6,10 @@ function [V_grid, policy_grid] = vfi_calc(Params, z_grid, z_prob, a_grid, V_grid
 % updates both value function and policy function 
 %
 % Params: struct of model parameters (e.g. beta, signa, etc.)
-% Z-grid: discretized income grid
+% Z_grid: discretized income grid
 % z_prob: transition probabikities for income process
-%a_grid; current wealth grid
-% C_grid_old: current value function (V^n) for each (a, iz) pair
+% a_grid; current wealth grid
+% V_grid_old: current value function (V^n) for each (a, iz) pair
 % policy_grid: current policy grid (a' choices) for each (a, iz)
 
 

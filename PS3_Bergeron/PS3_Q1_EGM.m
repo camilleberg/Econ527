@@ -37,3 +37,16 @@ a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); 
 
 %% Starting EGM 
 
+%% 1. find a' 
+
+ % VFI loop calculation to get V^{n+1} and a' grifd for each (a, iz) pair
+
+%% 2. given a' at (a, iz) find optimal a that maps to a'
+
+% backeards induction 
+
+
+% 3. sub into bellman equation 
+% 4. use interpolation 
+
+
