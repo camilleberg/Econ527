@@ -1,6 +1,6 @@
-function [V_value, policy_value] = solve_bellman(Params, z_grid, z_prob, a, V_grid_old)
+function [V_grid, policy_grid] = solve_bellman(Params, z_grid, z_prob, a, V_grid_old)
 
-% [V] = solve_bellman(Params, z_grid, z_prob, a, V_grid_old)
+% [V_grid, policy_grid] = solve_bellman(Params, z_grid, z_prob, a, V_grid_old)
 %
 % solves bellman equation for given value function grid (V^n) and wealth grid (a)
 % returns updated value function grid (V^{n+1}) for each (a, iz) pair

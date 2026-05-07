@@ -33,9 +33,9 @@ Params.e_stop = 1e-4; % convergence criterion for value function iteration
 
 
 % creating polynomial wealth grid 
-a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
+a_current_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
 disp('Wealth grid points:');
-disp(a_grid(1:10));
+disp(a_current_grid(1:10));
 
 % using rouwenhorst method to discretize the AR(1) process for income
 [z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
@@ -45,17 +45,20 @@ m_iter_bounds = [5, 10, 20]; % number of iterations
 
 %% setting up VFI iteration for outer loop 
 
-% initializing values
-V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
-policy_grid = zeros(Params.n_a, Params.n_z); % initialize policy function grid
 
 % to create table of policy iterations and time 
+if ~exist('results', 'dir')
+    mkdir('results');
+end
 results = [transpose(m_iter_bounds), zeros(length(m_iter_bounds), 1), zeros(length(m_iter_bounds), 1)]; % initialize results table
 % N x 1 and N x 1 time to make N x 2
 
 for i = 1:length(m_iter_bounds)
-    
-    tic;
+
+    % initializing values
+    V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
+    policy_grid = zeros(Params.n_a, Params.n_z); % initialize policy function grid
+
     max_policy_iter = m_iter_bounds(i); % get max policy iteration for this loop
     disp(['Running Howard policy improvement with max policy iterations = ', num2str(max_policy_iter), '...']);
 
@@ -65,12 +68,12 @@ for i = 1:length(m_iter_bounds)
         disp('File does not exist. Running Howard policy improvement...');
     
         % running VFI
+        tic; % start timer
 
-        [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_grid, z_prob, a_grid, max_policy_iter, V_grid, policy_grid); % run VFI loop and get value and policy grids
+        [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_grid, z_prob, a_current_grid, max_policy_iter, V_grid, policy_grid); % run VFI loop and get value and policy grids
 
         % save policy grid for this loop
         save(['results/policy_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'policy_grid');
-        % save value grid for this loop
         save(['results/value_grid_m_iter_', num2str(max_policy_iter), '.mat'], 'V_grid');
         
         time = toc; % saving time 

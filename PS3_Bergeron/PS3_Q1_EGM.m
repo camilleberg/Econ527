@@ -61,8 +61,17 @@ V_grid_old = V_grid; % initialize old value grid for convergence check
 % if a_grid_edm(i) > a_min, them VFI calc with a_grid_egm as new grid and get new V_grid and policy_grid
 % else, update V_grid(i) to be the budget constraint i.e. using a_grid 
 
+% getting bounday bellman value
+a_grid_min = Params.a_min * ones(1, Params.n_a); % next period's chocie have to be borrowing limit
+[V_min, policy_min] = solve_bellman(Params, z_grid, z_prob, a_grid_min, Params.a_min, V_grid_old);
 
-a_grid_egm[a_grid_egm < Params.a_min] = Params.a_min; % set any a_grid_egm values below a_min to a_min
+below = a_grid_egm < Params.a_min; % craetign index of values below borrowing limti
+% updating V_grid and policy_grid for values below borrowing limit using budget constraint
+V_grid(below) = V_min; % update value grid for values below borrowing limit using boundary bellman value
+policy_grid(below) = policy_min; % update policy grid for values
 
+% updating V_grid and policy_grid for values above borrowing limit using VFI loop with a_grid_egm as new grid
+V_grid_old = V_grid; % update old value grid for convergence check
+[V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_grid_egm, V_grid_old, policy_grid); % run VFI loop with a_grid_egm as new grid to get updated value and policy grids for values above borrowing limit    
 
 
