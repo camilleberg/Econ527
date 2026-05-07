@@ -28,6 +28,7 @@ function [V_grid, policy_grid, iteration] = howard_policy_improvement(Params, z_
         [V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_current_grid, V_grid_old);
         iteration = iteration + 1; % updating vfi iteration count
 
+
         % checking error for convergence
         conv_error = max(abs(V_grid(:) - V_grid_old(:)));
         if mod(iteration, 50) == 0
