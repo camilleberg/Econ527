@@ -1,4 +1,4 @@
-function u_prime_inv = utility_prime_inv(u, Params) % (Na x 1)  
+function c = utility_prime_inv(u, Params) % (Na x 1)  
 
 % u_prime_inv = utility_primeinv(u, Params)
 %
@@ -6,6 +6,7 @@ function u_prime_inv = utility_prime_inv(u, Params) % (Na x 1)
 % 
 % u: utility level
 % Params: struc of model
+% since u' = c^(-gamma), u'^-1 = c = u^(-1/gamma)
 
-    u_prime_inv = u.^(-1/Params.gamma); % inverse of CRRA utility
+    c= u.^(-1/Params.gamma); % inverse of CRRA utility
 end

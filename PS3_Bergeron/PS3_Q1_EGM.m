@@ -29,49 +29,62 @@ Params.e_stop = 1e-4; % convergence criterion for value function iteration
 
 
 % creating polynomial wealth grid 
-a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
+a_next_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve); % income grid using polynomial transformation
 
 % using rouwenhorst method to discretize the AR(1) process for income
 [z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
 
 
-%% Starting EGM 
 
-% 1. find a' 
+%% Initialzing values for EGM loop
 
-% initializing values
-V_grid = zeros(Params.n_a, Params.n_z); % initialize value function grid
-policy_grid = zeros(Params.n_a, Params.n_z); % initialize policy function grid
-a_grid_egm = zeros(Params.n_a, Params.n_z); % initialize endogenous grid for a choices for each (a', iz) pair
-    % this is the new a choices given k'prime 
+V_grid = ones(Params.n_a, Params.n_z); % initialize value function grid for EGM loop
+% changed initila guess from zeros because the inverse dooesn't liek that 
+error = Inf; % initialize error for convergence check in EGM loop
+iteration = 0; % initialize iteration count for EGM loop
 
-V_grid_old = V_grid; % initialize old value grid for convergence check
+%% Runing the loop 
 
- % VFI loop calculation to get V^{n+1} and a' grifd for each (a, iz) pair
-[V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_grid, V_grid_old, policy_grid);
+tic; % start timer for EGM loop
+while error > Params.e_stop * (1-Params.beta) && iteration < Params.max_iter
 
-% 2. given a' at (a, iz) find optimal a that maps to a'
-[a_grid_egm] = policy_fxn_egm_calc(Params, z_grid, z_prob, policy_grid, a_grid_egm);
+    V_grid_old = V_grid; % update old value function grid for convergence check in EGM loop
 
-% 3. sub into bellman equation 
+    % Calculating value function for a_min i.e. constrained
+    [V_grid_constrained] = calc_constrained(Params, z_grid, z_prob, a_next_grid, V_grid_old); 
+    % calculating value function for constrained case where a' = a_min for all (a, iz) pairs using calc_constrained function with V_grid initialized to zeros since we are only calculating the value function for the constrained case where a' = a_min for all (a, iz) pairs    
 
-% check if new a_grid_egm is within bounds of original a_grid, if not, we need to extrapolate V and policy grid to get values for a_grid_egm outside of original a_grid bounds
-%
-% psedo code 
-% if a_grid_edm(i) > a_min, them VFI calc with a_grid_egm as new grid and get new V_grid and policy_grid
-% else, update V_grid(i) to be the budget constraint i.e. using a_grid 
+    % 1. discretize a' and find contnous a
+    a_current_grid = compute_EGM(Params, z_grid, z_prob, a_next_grid, V_grid_old); 
 
-% getting bounday bellman value
-a_grid_min = Params.a_min * ones(1, Params.n_a); % next period's chocie have to be borrowing limit
-[V_min, policy_min] = solve_bellman(Params, z_grid, z_prob, a_grid_min, Params.a_min, V_grid_old);
+    % 2. constarined versus unconstarined
+    if any(a_current_grid(:) <= Params.a_min) % check if any are constrained
+        disp('Constrained case detected, updating value and policy grids for constrained case');
+        constrained_idx = a_current_grid <= Params.a_min; % get indices of constrained cases where a' <= a_min
 
-below = a_grid_egm < Params.a_min; % craetign index of values below borrowing limti
-% updating V_grid and policy_grid for values below borrowing limit using budget constraint
-V_grid(below) = V_min; % update value grid for values below borrowing limit using boundary bellman value
-policy_grid(below) = policy_min; % update policy grid for values
+        V_grid(constrained_idx, :) = V_grid_constrained(constrained_idx, :); % update value grid for values below borrowing limit using boundary bellman value from constrained case
+        a_next_grid(constrained_idx, :) = Params.a_min; % update policy grid for values below borrowing limit using boundary bellman value from constrained case
+    else
+        disp('No constrained case detected, using EGM values for value and policy grids');
 
-% updating V_grid and policy_grid for values above borrowing limit using VFI loop with a_grid_egm as new grid
-V_grid_old = V_grid; % update old value grid for convergence check
-[V_grid, policy_grid] = VFI_calc(Params, z_grid, z_prob, a_grid_egm, V_grid_old, policy_grid); % run VFI loop with a_grid_egm as new grid to get updated value and policy grids for values above borrowing limit    
+        unconstrained_idx = a_current_grid > Params.a_min; % get indices of unconstrained cases where a' >= a_min
+
+        % calculating for unconstrained 
+        [V_grid(unconstrained_idx, :), a_next_grid(unconstrained_idx, :)] = ...
+            VFI_calc(Params, z_grid, z_prob, a_current_grid(unconstrained_idx), V_grid_old(unconstrained_idx, :)); % calculating value and policy grids for unconstrained cases using VFI_calc function with a_current_grid for unconstrained cases and V_grid initialized to zeros since we are only calculating the value and policy grids for the unconstrained cases where a' >= a_min for all (a, iz) pairs
+
+    end
+
+    error = max(abs(V_grid(:) - V_grid_old(:))); % calculate convergence error for EGM loop
+    iteration = iteration + 1; % update iteration count for EGM loop
+
+    if mod(iteration, 50) == 0
+        disp(['Iteration: ', num2str(iteration), ', Convergence error: ', num2str(error)]);
+    end
+
+end
+
+time = toc; % end timer for EGM loop
+disp(['EGM loop completed after ', num2str(iteration), ' iterations with convergence error: ', num2str(error), ' and time: ', num2str(time), ' seconds.']);
 
 

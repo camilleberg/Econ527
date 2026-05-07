@@ -1,4 +1,4 @@
-function c = consumption(a, z, a_prime_grid, Params)
+function c = consumption(a, z, a_next_grid, Params)
 
 % c = consumption(a, z, a_grid, Params)
 % calculates consumption for given current wealth (a), income (z), and next period wealth choices (a
@@ -8,6 +8,6 @@ function c = consumption(a, z, a_prime_grid, Params)
 % a_prime_grid: grid of next period wealth choices (a')
 % Params: struct of model parameters (e.g. beta, signa, etc.)
 
-    c_possible = (1 + Params.r) * a + z - a_prime_grid;
+    c_possible = (1 + Params.r) * a + z - a_next_grid;
     c = max(0, c_possible);
 end

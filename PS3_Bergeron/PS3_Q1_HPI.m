@@ -1,5 +1,5 @@
 % Econ 527 Spring 2026 
-% HW 3 Question 1
+% HW 3 Question 1, pt1
 % Professor Greaney
 % Written by: Camille Bergeron
 % Due: May 08, 2026

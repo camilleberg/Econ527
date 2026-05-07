@@ -28,7 +28,7 @@ R = 1 + Params.r;
 a_min = Params.a_min;
 a_max = Params.a_max;
 
- % looping through each (a, iz pair)
+% looping through each (a, iz pair)
 for ia = 1:Params.n_a
     a_curr = a_current_grid(ia);
     for iz = 1:Params.n_z
