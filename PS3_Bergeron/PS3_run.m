@@ -13,3 +13,4 @@ run('programs/PS3_Q1_HPI.m'); % run Howard policy improvement code
 run('programs/PS3_Q1_EGM.m'); % run Endogenous Grid Method code
 
 %% Question 2: Stationary Distribution and Income Fluctuations
+run('programs/PS3_Q2.m')
