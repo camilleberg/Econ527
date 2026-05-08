@@ -1,0 +1,153 @@
+\documentclass{article}
+
+% Math
+\usepackage{amsmath, amssymb, amsthm}
+
+% Tables
+\usepackage{booktabs}
+
+% Figures
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+% commands
+\newcommand{\algorithmicbreak}{\textbf{break}}
+\newcommand{\BREAK}{\STATE \algorithmicbreak}
+
+% Misc
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{biblatex}  
+\usepackage{booktabs}                  % required for \addbibresource
+% \addbibresource{references.bib}
+
+\title{Econ 527 HW3}
+\author{Camille Bergeron}
+\date{May 2026}
+
+\begin{document}
+\maketitle
+
+\section{Speeding up VFI}
+
+This problem is the same form last problem set i.e. 
+We seek to solve a simple representative agent neoclassical growth model. An agent solves 
+
+\begin{equation}\label{eq:nkg}
+\begin{aligned}
+     \max_{\{c_t\}_{t=0}^{\infty}} \mathbb{E}_0 \sum_{t=0}^{\infty} \beta^t u(c_t) \\
+\text{s.t.} \quad k_{t+1} = Ak_t^{\alpha} + (1-\delta)k_t - c_t
+\end{aligned}
+\end{equation} where $u(c) = \log(c)$, $k_t>0$, and $k_0$ is given. The problem \ref{eq:nkg} can be written as 
+\begin{equation}\label{eq:value_fxn}
+    V(k)=\max _{k^{\prime} \geq 0} \log \left(A k^\alpha+(1-\delta) k-k^{\prime}\right)+\beta V\left(k^{\prime}\right)
+\end{equation}
+
+We set the following parameters: $\beta = 0.96, A=1, \delta =1$, and $\alpha = 0.35$. 
+
+\subsection{Howard Policy Iteration}
+
+To speed up Value Function Iteration, we implement the Howar Policy Iteration algorthim. 
+\begin{algorithm}[H]
+\caption{Howard Policy Iteration Algorithm}\label{alg:HPI}
+\begin{algorithmic}[1]
+\Require Grid $\{a_i\}_{i=1}^{N}$, income states $\{z_j\}$, parameters $\beta, r, a_{\min}$, tolerance $\epsilon$, iterations $M$
+\State Guess $V^0(a_i, z_j)$, set $n = 0$
+\Repeat
+    \State Construct interpolants from $\{a_i, V^n(a_i, z_j)\}$ and perform one Bellman iteration:
+    \[
+        V^{n+1}(a_i, z_j) = \max_{a' \geq a_{\min}} \left\{ u\!\left((1+r)a_i + \exp(z_j) - a'\right) + \beta\, \mathbb{E}\!\left[V^n(a', z') \mid z_j\right] \right\}
+    \]
+    \If{converged}
+        \State \textbf{stop}
+    \Else
+        \State Save optimizer $a'(a_i, z_j)$
+        \State Set $\mathcal{V}^0(a_i, z_j) = V^{n+1}(a_i, z_j)$, set $m = 0$
+        \Repeat
+            \State Construct interpolants and perform one Bellman iteration:
+                \[
+                \resizebox{0.85\linewidth}{!}{$
+                    V^{n+1}(a_i, z_j) = \max_{a' \geq a_{\min}} \left\{ u\!\left((1+r)a_i + \exp(z_j) - a'\right) + \beta\, \mathbb{E}\!\left[V^n(a', z') \mid z_j\right] \right\}
+                $}
+\]
+            \State $m \leftarrow m + 1$
+        \Until{$m = M - 1$}
+        \State Set $V^{n+1}(a_i, z_j) = \mathcal{V}^M(a_i, z_j)$
+    \EndIf
+    \State $n \leftarrow n + 1$
+\Until{$\|V^{n+1} - V^n\|_\infty < \epsilon (1-\beta)$}
+\end{algorithmic}
+\end{algorithm}
+
+The results are
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c}
+      \textbf{M} & \textbf{Time (s)} & \textbf{Bellman iterations} \\ 
+        \hline
+        5	& 9.404590667	& 34 \\
+        10	& 7.969550042	& 23 \\ 
+        20	& 7.152319792	& 15
+    \end{tabular}
+    \caption{Results from Howard Policy Improvement}
+    \label{tab:HPI}
+\end{table}
+
+
+\subsection{Endogeneous Grid Method}    
+
+For the Endogneous Grid Method, it took \textbf{2433} iterations and took \textbf{1.43} seconds.
+
+\section{The Stationary Distribution of State Variables}
+
+\subsection{Net Demand Using Interpolation}
+The transiton matrix was calculated via cubic spline intterpolation. Using the current wealth grid
+from Endogeneous grid pint method, cubic spline interpolants were calculated to fit a finer wealth gird 
+(defined as 1,000 evenly spaced gridpoints over the range $[a_{min},a_{max}]$) on the policy grid 
+to approximate the policy function $g(a_i, z_j)$.
+
+Given the policy function $g (a_i, z_j)$ and transition matrix of z, the pair $(a, z)$ follows
+a Markov process with the transition matrix $\Upsilon$ with dimensons $ij \times \ij$. The stationary distribution is then caluclated 
+using the eigenvalue method such that 
+\begin{equation}\label{eq:station}
+    \Upsilon' = \Upsilon' \phi(a_i, z_j)
+\end{equation}
+
+and $\sum_{i} \upsilon_i =1$, where $\phi(a_i, z_j)$ is the stationary distribution 
+with dimensions $i \times j$. 
+We can write \eqref{eq:station} as a system of inear equations 
+\begin{equation*}
+    \begin{pmatrix}
+        \upsilon_{11} & \upsilon_{12} & \cdots & \upsilon_{1i} \\
+        \upsilon_{21} & \upsilon_{22} & \cdots & \upsilon_{2i} \\
+        \vdots & \ddots &&  \vdots \\
+        \upsilon_{j1} & \upsilon_{j2} & \cdots & \upsilon_{ji}
+    \end{pmatrix} = 
+   \begin{pmatrix}
+        \upsilon_{11} & \upsilon_{12} & \cdots & \upsilon_{1i} \\
+        \upsilon_{21} & \upsilon_{22} & \cdots & \upsilon_{2i} \\
+        \vdots & \ddots &&  \vdots \\
+        \upsilon_{j1} & \upsilon_{j2} & \cdots & \upsilon_{ji}
+    \end{pmatrix} \phi(a_i, z_j)
+\end{equation*} 
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../programs/figs/stationary_eigen.png}
+    \caption{Stationary distribution of state variables vs. wealth}
+    \label{fig:stationary vs wealth}
+\end{figure}
+
+According to \ref{fig:stationary vs wealth}, the stationaty distribution equals 1 only once i.e. 
+$$P$$
+
+\subsection{Net Demand Using Simulation}
+
+\printbibliography
+
+\end{document}

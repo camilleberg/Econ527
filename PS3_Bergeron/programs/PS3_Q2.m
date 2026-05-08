@@ -77,7 +77,7 @@ disp('Total states:'); disp(total_states);
 % (z1, a1)
 % (z2, a2)
 
-% calculating transitionm matrix as kronekor product 
+% calculating tranisionts
 n_a_fine = Params.n_a;
 numstates   = Params.n_a * Params.n_z;
 policy_P    = zeros(numstates);       
@@ -110,7 +110,7 @@ for iz = 1:Params.n_z
     end
 end
 
-%% Calculate stationar dist using eigenvalue method
+%% Calculate stationary dist using eigenvalue method
 
 
 if isfile('results/stationary_eigen.mat')
