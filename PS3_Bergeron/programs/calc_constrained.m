@@ -1,35 +1,42 @@
-function [V_grid_constrained] = calc_constrained(Params, z_grid, z_prob, a_current_grid, V_grid_old) 
+function [V_grid_constrained, policy_grid_constrained] = calc_constrained(Params, z_grid, z_prob, a_next_grid, V_grid_old)
 
-% [value_fxn_val] = calc_constrained(Params, z_grid, z_prob, a_current_grid, V_grid_old, a_next_grid) 
+% [V_grid_constrained, policy_grid_constrained] = calc_constrained(...)
 %
-% evaluates the bellman equation for the constrained case where a <= a_min for all possible iz
-% to get value function value 
+% Evaluates the Bellman equation for ALL current wealth levels a_i under
+% the CONSTRAINED policy a' = a_next_grid(1) = a_1 (first exogenous grid point).
 %
-% Params: struct of model parameters (e.g. beta, signa, etc.)
-% Z_grid: discretized income grid
-% z_prob: transition probabilities for income process
-% a_current_grid; current period wealth grid (a choices) for each (a, iz)
-% V_grid_old: current value function (V^n) for each (a, iz) pair
+% Used for households where the unconstrained optimal a' < a_min, i.e.
+% a_current_grid(ia,iz) <= a_min.
+%
+% Formula:
+%   V(a_i, z_j) = u((1+r)*a_i + exp(z_j) - a_1) + beta*E[V(a_1,z')|z_j]
+%
+% Inputs:
+%   a_next_grid - (n_a x 1) exogenous grid; a_1 = a_next_grid(1)
+%   V_grid_old  - (n_a x n_z) current value function on exogenous grid
 
+    a_1  = a_next_grid(1);   % BUG FIX 1: constrained choice is a_1, not a_min scalar
+    R    = 1 + Params.r;
 
-V_grid_constrained = zeros(Params.n_a, Params.n_z);
-EV_constrained = z_prob * V_grid_old(1,:)'; 
-% since a' = a_min for all (a, iz) pairs, we only need to look at first 
-% row of V_grid_old for expected value calculation since we are only 
-% looking at the constrained case where a' = a_min for all (a, iz) pairs
+    % BUG FIX 2: E[V(a_1,z')|z] — continuation value evaluated at a_1 for each iz
+    % V_grid_old(1,:) is V at a_1 for each income state (first row of exog grid)
+    % z_prob is (n_z x n_z): EV_a1(iz) = sum_{iz'} pi(iz,iz') * V(a_1, iz')
+    EV_a1 = z_prob * V_grid_old(1, :)';   % (n_z x 1)
 
-for iz = 1:Params.n_z
-    z_curr = z_grid(iz);
+    V_grid_constrained   = zeros(Params.n_a, Params.n_z);
+    policy_grid_constrained = ones(Params.n_a, Params.n_z) * a_1;
 
-    c = consumption(a_current_grid, z_curr, Params.a_min, Params);
-    c = c(:);
+    for iz = 1:Params.n_z
+        z_curr = z_grid(iz);
 
-    % can't use utility fxm cause it said dot indexing wasn't allowed 
-    u = (c.^(1-Params.gamma)-1)/(1-Params.gamma);
-    u(c <= 0) = -Inf;
+        % consumption at each a_i when saving a_1: c_i = R*a_i + exp(z) - a_1
+        % a_next_grid plays the role of a_current here (we evaluate at all grid pts)
+        c = R * a_next_grid + exp(z_curr) - a_1;   % (n_a x 1)
 
-    V_grid_constrained(:,iz) = u + Params.beta * EV_constrained(iz);
-end
+        u      = (c .^ (1 - Params.gamma) - 1) / (1 - Params.gamma);
+        u(c <= 0) = -Inf;
 
-
+        % BUG FIX 3: EV_a1(iz) is a scalar — same for all ia since a'=a_1 fixed
+        V_grid_constrained(:, iz) = u + Params.beta * EV_a1(iz);
+    end
 end

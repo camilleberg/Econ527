@@ -13,3 +13,4 @@ newValue = 0; % Value to replace elements below threshold
 A(A < threshold) = newValue;
 disp('Updated matrix A:');
 disp(A);
+

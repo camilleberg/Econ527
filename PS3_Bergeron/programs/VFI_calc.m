@@ -29,9 +29,9 @@ a_min = Params.a_min;
 a_max = Params.a_max;
 
 % looping through each (a, iz pair)
-for ia = 1:Params.n_a
+for ia = 1:length(a_current_grid)
     a_curr = a_current_grid(ia);
-    for iz = 1:Params.n_z
+    for iz = 1:length(z_grid)
         z_curr = z_grid(iz); % curren income 
 
         % solving bellman equation for given (a, iz) pair to get updated value and policy

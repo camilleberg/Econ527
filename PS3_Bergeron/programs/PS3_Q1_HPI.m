@@ -7,6 +7,7 @@
 
 
 % Howard Policy Improvement
+clear; clc; close all;
 
 % References
 % https://github.com/fediskhakov/dcegm
@@ -50,6 +51,7 @@ m_iter_bounds = [5, 10, 20]; % number of iterations
 if ~exist('results', 'dir')
     mkdir('results');
 end
+
 results = [transpose(m_iter_bounds), zeros(length(m_iter_bounds), 1), zeros(length(m_iter_bounds), 1)]; % initialize results table
 % N x 1 and N x 1 time to make N x 2
 
