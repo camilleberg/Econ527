@@ -1,6 +1,8 @@
 function a_sim = simulate_a(policy_fxn, a_grid, z_sim, Params)
 % a_sim = simulate_a(policy_fxn, a_grid, z_sim, Params)
 %
+% simulates wealth and sets inital state to borrowing limit
+% 
 % policy_fxn:  policy function indices (n_assets x n_states)
 % a_grid:      asset grid
 % z_sim:       simulated income states (n_duration+1 x n_sim)

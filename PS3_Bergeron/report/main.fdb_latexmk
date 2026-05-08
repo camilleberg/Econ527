@@ -1,13 +1,13 @@
 # Fdb version 4
-["biber main"] 0 "main.bcf" "main.bbl" "main" 1778273933.44551 -1
-  "main.bcf" 1778273933.38563 108456 41827ac3324768f9afde47098e2184ed "pdflatex"
+["biber main"] 1778279275.21411 "main.bcf" "main.bbl" "main" 1778279281.73027 0
+  "main.bcf" 1778279281.63498 108053 92d793237121c8444051d54a8bc8b79c "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1778273932.87335 "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" "main.pdf" "main" 1778273933.44571 0
-  "../programs/figs/stationary_eigen.png" 1778265198.17868 78564 150907e57194cd74c5a8f8ca379a6fbb ""
-  "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" 1778273932.67134 5374 c5eeda523f36ab45c7e9a78b2e1f1b60 ""
+["pdflatex"] 1778279280.83479 "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" "main.pdf" "main" 1778279281.73086 0
+  "../programs/figs/stationary_eigen.png" 1778275630.80235 72556 61a1eace84ec75cdda2f2144272c2bf0 ""
+  "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" 1778279219.02519 10161 3f10908d4a03c97791e475fe7a1b2faf ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -29,6 +29,7 @@
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm" 1136768653 1124 6c73e740cf17375f03eec0ee63599741 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm" 1136768653 1116 933a60c408fc0a863a92debe84b2d294 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1136768653 1120 8b7d695260f3cff42e636090a8002094 ""
+  "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm" 1136768653 768 1321e9409b4137d6fb428ac9dc956269 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1248133631 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1248133631 32080 340ef9bf63678554ee606688e7b5339d ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
@@ -40,10 +41,10 @@
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb" 1248133631 32362 179c33bbf43f19adbb3825bb4e36e57a ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb" 1248133631 31809 8670ca339bf94e56da1fc21c80635e2a ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
-  "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1248133631 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb" 1248133631 32915 7bf7720c61a5b3a7ff25b0964421c9b6 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
+  "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb" 1248133631 31099 c85edf1dd5b9e826d67c9c7293b6786c ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb" 1248133631 34694 ad62b13721ee8eda1dcc8993c8bd7041 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty" 1576625341 40635 c40361e206be584d448876bba8a64a3b ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/generic/bitset/bitset.sty" 1576016050 33961 6b5c75130e435b2bfdb9f480a09a39f9 ""
@@ -112,17 +113,19 @@
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/logreq/logreq.sty" 1284153563 6187 b27afc771af565d3a9ff1ca7d16d0d46 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/refcount/refcount.sty" 1576624809 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1750533675 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
+  "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/array.sty" 1749585163 15698 f5f20b24886bb50156054c53e19b13fd ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/enumerate.sty" 1748806692 3468 f21ceb3448a22fec45299f924e7fc48b ""
+  "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/tabularx.sty" 1748806692 7243 a2c17f18e2c9b702b84fad03d5f9c78b ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty" 1388531844 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/web2c/texmf.cnf" 1749313668 42213 4e2ca030e8e2640502016e9e45868dcb ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1751936044 443544 93ae5da40de604dfa8ff68c2a7f0a089 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1751936097 2244980 bfb39c62918290b12514fd9fd097502f ""
   "/Users/camillebergeron/Library/TinyTeX/texmf.cnf" 1745594431.81592 708 85fd07691b6294ba94c59dbc62380410 ""
-  "main.aux" 1778273933.38462 2083 4a69ae5de640dc1000ae65b97b1e6c79 "pdflatex"
-  "main.bbl" 1778270135.1601 0 d41d8cd98f00b204e9800998ecf8427e "biber main"
-  "main.out" 1778273933.38495 1185 45b9769c8fa26166ae3f89fdcf24f3c3 "pdflatex"
-  "main.run.xml" 1778273933.38608 2224 bc6149f5caee4074188e1b81a66978d0 "pdflatex"
-  "main.tex" 1778273932.67134 5374 c5eeda523f36ab45c7e9a78b2e1f1b60 ""
+  "main.aux" 1778279281.63313 2764 f34c3f0c03a1b211477cc8e390465aa5 "pdflatex"
+  "main.bbl" 1778279279.84511 0 d41d8cd98f00b204e9800998ecf8427e "biber main"
+  "main.out" 1778279281.63376 2348 14aea1f3a5b66ad5051264d998978732 "pdflatex"
+  "main.run.xml" 1778279281.6358 2224 bc6149f5caee4074188e1b81a66978d0 "pdflatex"
+  "main.tex" 1778279219.02519 10161 3f10908d4a03c97791e475fe7a1b2faf ""
   (generated)
   "main.aux"
   "main.bcf"

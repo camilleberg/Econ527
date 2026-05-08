@@ -27,6 +27,10 @@ INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/amscls/amsthm.
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/amscls/amsthm.sty
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.sty
+INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/tabularx.sty
+INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/tabularx.sty
+INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/array.sty
+INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/tools/array.sty
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
@@ -215,6 +219,7 @@ INPUT ../programs/figs/stationary_eigen.png
 INPUT ../programs/figs/stationary_eigen.png
 INPUT ../programs/figs/stationary_eigen.png
 INPUT ../programs/figs/stationary_eigen.png
+INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/cm/cmtt10.tfm
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out
@@ -231,8 +236,8 @@ INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfo
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb
-INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb
+INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb
 INPUT /Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
