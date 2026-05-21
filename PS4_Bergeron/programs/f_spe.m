@@ -31,6 +31,7 @@ R        = 1 + Params.r;
 
 u_fxn_h       = @(c)  u_fxn(c, Params);
 u_prime_inv_h = @(mu) u_prime_inv(mu, Params);
+u_prime_h     = @(c) u_prime(c, Params);
 
 % ── Initialisation ────────────────────────────────────────────────────────
 
@@ -42,7 +43,7 @@ for iz = 1:Params.n_z
     c_init(:, iz) = max(R * a_next_grid + exp(z_grid(iz)) - a_1, 1e-6);
 end
 
-mu_grid = u_prime(c_init, Params);
+mu_grid = u_prime_h(c_init);
 
 % Initial value function: perpetual consumption, discounted
 V_grid = zeros(Params.n_a, Params.n_z);
@@ -116,10 +117,6 @@ while error_val > Params.e_stop * (1 - Params.beta) && iteration < Params.max_it
     %── Step 5: convergence ────────────────────────────────────────────────
     error_val = max(abs(V_grid(:) - V_grid_old(:)));
     iteration = iteration + 1;
-
-    if mod(iteration, 100) == 0
-        fprintf('Iteration %4d,  error = %.4e\n', iteration, error_val);
-    end
 end
 time_egm = toc;
 
@@ -185,7 +182,7 @@ net_assets        = sum(a_fine_grid(:) .* lambda_marginal_a);
 end
 
 %% Local Functions
-% -- compute EGM ──────────────────────────────────────────────────────
+% -- cubic spline ──────────────────────────────────────────────────────
 function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
 
 % [V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
