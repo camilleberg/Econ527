@@ -1,4 +1,4 @@
-function [v_fxn, policy_fxn, phi_dist, net_assets] = f_spe(z_grid, z_prob, u_fxn, u_prime_inv, Params, a_next_grid, a_fine_grid)
+function [v_fxn, policy_fxn, phi_dist, net_assets] = f_spe(z_grid, z_prob, u_fxn, u_prime_inv, u_prime, Params, a_next_grid, a_fine_grid)
 
 % [v_fxn, policy_fxn, phi_dist, net_assets] =
 %       f_spe(r, markov_chain, u_fxn, u_prime_inv, Params, a_grid, a_fine_grid)
@@ -59,7 +59,7 @@ iteration = 0;
 
 % ── EGM iteration ─────────────────────────────────────────────────────────
 tic;
-while error_val > Params.e_stop * (1 - Params.beta) && iteration < Params.max_iter
+while error_val > Params.e_stop && iteration < Params.max_iter
 
     V_grid_old  = V_grid;
     mu_grid_old = mu_grid;
@@ -69,7 +69,7 @@ while error_val > Params.e_stop * (1 - Params.beta) && iteration < Params.max_it
         Params, z_grid, z_prob, a_next_grid, mu_grid_old, u_prime_inv_h);
 
     %── Step 2: classify constrained / unconstrained points ───────────────
-    constrained_mask   = a_current_grid <= Params.a_min;
+    constrained_mask = a_current_grid <= a_1;   % a_1 = a_next_grid(1)
     unconstrained_mask = ~constrained_mask;
 
     %── Step 3: value function update ─────────────────────────────────────
@@ -108,7 +108,7 @@ while error_val > Params.e_stop * (1 - Params.beta) && iteration < Params.max_it
         c_new(con, iz) = max(R * a_next_grid(con) + exp(z_grid(iz)) - a_1, 1e-10);
 
         % Policy: unconstrained saves a_current (endogenous), constrained saves a_1
-        policy_grid(unc, iz) = a_current_grid(unc, iz);
+        policy_grid(unc, iz) = a_next_grid(unc); % changed per ai
         policy_grid(con, iz) = a_1;
     end
 
@@ -119,6 +119,7 @@ while error_val > Params.e_stop * (1 - Params.beta) && iteration < Params.max_it
     iteration = iteration + 1;
 end
 time_egm = toc;
+
 
 fprintf('EGM converged after %d iterations in %.2f seconds (error = %.2e)\n', ...
         iteration, time_egm, error_val);
@@ -178,6 +179,7 @@ phi_dist = reshape(stationary_eigen, n_a_fine, Params.n_z);
 
 lambda_marginal_a = sum(phi_dist, 2);              % (n_a_fine x 1)
 net_assets        = sum(a_fine_grid(:) .* lambda_marginal_a);
+
 
 end
 
@@ -251,8 +253,8 @@ function [a_current_grid, c_current_grid] = compute_EGM(Params, z_grid, z_prob, 
             c_curr = max(u_prime_inv(beta * R * EMU(ia, iz)), 1e-10);
 
             % Budget constraint: c + a' = R*a + exp(z)  =>  a = (c + a' - exp(z)) / R
-            a_curr = (c_curr + a_next - exp(z_curr)) / R;
-
+            a_curr = (a_next - exp(z_curr) + c_curr) / R;
+            
             a_current_grid(ia, iz) = a_curr;
             c_current_grid(ia, iz) = c_curr;
         end

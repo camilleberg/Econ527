@@ -46,7 +46,6 @@ disp('Transition probabilities:'); disp(z_prob);
 
 % setting grid parameters
 Params.a_min = -mean(exp(z_grid)); % the mean of income 
-fprintf('The average income is %d ', Params.a_min);
 Params.a_max = mean(exp(z_grid)) * 50; % 50 times that 
 Params.curve = 2; % curvature parameter
 Params.n_a = 150; % number of welath grid points 
@@ -62,22 +61,17 @@ a_fine_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.cur
 r_low  = -0.05;
 r_high = 1/Params.beta - 1 - 1e-4;
 
+Params.r = r_high;
+net_assets_high = f_nad(z_grid, z_prob, @u_fxn, @u_prime_inv, @u_prime, Params, a_next_grid, a_fine_grid);
+fprintf('Net assets are %.4f at real interest rate %.4f\n', net_assets_high, Params.r);
+
+Params.r = r_low;
+net_assets_low=f_nad(z_grid, z_prob, @u_fxn, @u_prime_inv, @u_prime, Params, a_next_grid, a_fine_grid);
+fprintf('Net assets are %.4f at real interest rate %.4f\n', net_assets_low, Params.r);
+
 % bisection algortithm 
-while (r_high - r_low) > 1e-4
-    r_mid = (r_low + r_high) / 2; 
-    Params.r = r_mid; 
-    tic;
-    net_assets = f_nad(z_grid, z_prob, @u_fxn, @u_prime_inv, Params, a_next_grid, a_fine_grid);
-    time_nad = toc; 
-    fprintf('Net assets are %.4f at real interest rate %.4f\n and took %.4f to run \n', net_assets, Params.r, time_nad);
-    
-    if net_assets > 0
-        r_low = r_mid;    % excess saving → r too low, raise the floor
-    else
-        r_high = r_mid;   % excess borrowing → r too high, lower the ceiling
-    end
-end
-fprintf('\nEquilibrium interest rate: r* = %.6f\n', (r_low + r_high)/2);
+r_star = bisection(r_low, r_high, Params, z_grid, z_prob, ...
+    @u_fxn, @u_prime_inv, @u_prime, a_next_grid, a_fine_grid);
 
 
 %% Finding the value function, policy function, and density
@@ -89,3 +83,23 @@ fprintf('\nEquilibrium interest rate: r* = %.6f\n', (r_low + r_high)/2);
 % disp('Took ', num2str(time), " seconds")
 
 %% Checking if wealth grid is binding 
+
+%% Local Functions 
+
+function r = bisection(r_low, r_high, Params, z_grid, z_prob, ...
+        u_fxn, u_prime_inv, u_prime, a_next_grid, a_fine_grid)
+    while (r_high - r_low) > 1e-4
+        r_mid = (r_low + r_high) / 2;
+        Params.r = r_mid;
+        net_assets = f_nad(z_grid, z_prob, u_fxn, u_prime_inv, u_prime, ...
+                           Params, a_next_grid, a_fine_grid);
+        fprintf('r = %.6f, net_assets = %.4f\n', r_mid, net_assets);
+        if net_assets > 0
+            r_high = r_mid;   % ← Bug 3 fix also applied here
+        else
+            r_low  = r_mid;
+        end
+    end
+    r = (r_low + r_high) / 2;
+    fprintf('\nEquilibrium r* = %.6f\n', r);
+end
