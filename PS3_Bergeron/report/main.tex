@@ -23,7 +23,7 @@
 \usepackage{algpseudocode}
 \usepackage{biblatex}
 
-\title{Econ 527 HW3}
+\title{Econ 527 HW4}
 \author{Camille Bergeron}
 \date{May 2026}
 
@@ -31,97 +31,258 @@
 \maketitle
 
 % ============================================================
-\section{Speeding up VFI}
+\section{The Huggett Model}
 % ============================================================
 
-This problem takes the same form as the previous problem set. We seek to solve a simple representative agent neoclassical growth model where an agent solves
-
+We solve the infinite-horizon Huggett (1993) model, in which households trade a
+single asset (bonds) in zero net supply. Each household maximises
 \begin{equation*}
-\begin{aligned}
-     \max_{\{c_t\}_{t=0}^{\infty}} \mathbb{E}_0 \sum_{t=0}^{\infty} \beta^t u(c_t) \\
-\text{s.t.} \quad k_{t+1} = Ak_t^{\alpha} + (1-\delta)k_t - c_t
-\end{aligned}
+    \max_{\{a_{t+1}\}_{t=0}^{\infty}} \; \mathbb{E}_0 \sum_{t=0}^{\infty} \beta^t u(c_t)
 \end{equation*}
-
-where $u(c) = \log(c)$, $k_t > 0$, and $k_0$ is given. The problem \eqref{eq:value_fxn} can be written as the value function
-
-\begin{equation}\label{eq:value_fxn}
-    V(k) = \max_{k^{\prime} \geq 0} \log\!\left(Ak^\alpha + (1-\delta)k - k^{\prime}\right) + \beta V\!\left(k^{\prime}\right)
+subject to the period budget constraint and borrowing limit
+\begin{equation*}
+    c_t + a_{t+1} = (1+r)a_t + \exp(z_t), \quad c_t \geq 0, \quad a_{t+1} \geq a_{\min},
+\end{equation*}
+where idiosyncratic log-income follows the AR(1) process
+\begin{equation*}
+    \log z_t = \rho \log z_{t-1} + \varepsilon_t, \quad \varepsilon_t \sim \mathcal{N}(0,\sigma^2),
+\end{equation*}
+and the period utility function is CRRA,
+\begin{equation*}
+    u(c) = \frac{c^{1-\gamma}}{1-\gamma}.
+\end{equation*}
+The Bellman equation is
+\begin{equation}\label{eq:bellman}
+    V(a,z) = \max_{a' \geq a_{\min}} \; u\!\left((1+r)a + \exp(z) - a'\right) + \beta\,\mathbb{E}\bigl[V(a',z')\mid z\bigr].
 \end{equation}
 
-We set the following parameters: $\beta = 0.96$, $A = 1$, $\delta = 1$, and $\alpha = 0.35$.
+Bonds are in zero net supply, so equilibrium requires
+\begin{equation*}
+    \mathcal{A}(r) \;:=\; \sum_{i}\sum_{j} a_i\,\phi(a_i,z_j) = 0,
+\end{equation*}
+and the equilibrium interest rate $r^*$ satisfies $\mathcal{A}(r^*)=0$.
+
+Parameters are set as follows: $\gamma = 2$, $\beta = 0.96$, $\rho = 0.9$,
+$\sigma = 0.2$, $n_z = 7$, $n_a = 150$, grid curvature $\kappa = 2$.
+The borrowing limit is set to average income $a_{\min} = -\bar{z}$, where
+$\bar{z} = \mathbb{E}[\exp(z)] \approx 1.30$, and the upper bound is
+$a_{\max} = 50\bar{z}$. The AR(1) income process is discretised using
+Rouwenhorst's method.
 
 % ------------------------------------------------------------
-\subsection{Howard Policy Iteration}
+\subsection{Algorithm}
 % ------------------------------------------------------------
 
-To speed up Value Function Iteration, we implement the Howard Policy Iteration algorithm.
+We solve the household problem using Value Function Iteration (VFI) with the Endogenous Gridpoint Method. Starting from the initial guess
+$V^0(a_i,z_j) = u(Ra_i + \exp(z_j) - a_{\min})/(1-\beta)$, each outer
+iteration performs one full Bellman maximisation (exploiting monotonicity and
+concavity of $V$ in $a$ to speed the grid search), followed by $M=30$ Howard
+improvement steps under the fixed policy. This reduces the total iteration count
+by roughly an order of magnitude relative to standard VFI.
 
-
-The results are shown in Table~\ref{tab:HPI}.
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{c|c|c}
-      \textbf{M} & \textbf{Time (s)} & \textbf{Bellman Iterations} \\
-        \hline
-        5  & 9.40  & 34 \\
-        10 & 7.97  & 23 \\
-        20 & 7.15  & 15
-    \end{tabular}
-    \caption{Results from Howard Policy Iteration}
-    \label{tab:HPI}
-\end{table}
-
-where $M$ is defined as the number of policy iterations. 
+The equilibrium is found by bisection on $r \in [-0.05,\; 1/\beta - 1 - \varepsilon]$.
+At each candidate rate, the household problem is solved, the stationary distribution
+$\phi$ is computed via the eigenvalue method (unit left eigenvector of the
+state-transition matrix $\Upsilon$, normalised to sum to one), and net asset demand
+$\mathcal{A}(r)$ is evaluated. Bisection terminates when $|r_{\text{high}} - r_{\text{low}}| < 10^{-4}$.
 
 % ------------------------------------------------------------
-\subsection{Endogenous Grid Method}
+\subsection{Results}
 % ------------------------------------------------------------
 
-For the Endogenous Grid Method, it took \textbf{2433} iterations and \textbf{1.43} seconds.
-
-% ============================================================
-\section{The Stationary Distribution of State Variables}
-% ============================================================
-
-% ------------------------------------------------------------
-\subsection{Net Demand Using Interpolation}
-% ------------------------------------------------------------
-
-The transition matrix was calculated via cubic spline interpolation. Using the wealth grid from the Endogenous Grid Method, cubic spline interpolants were calculated to fit a finer wealth grid (defined as 1,000 evenly spaced grid points over the range $[a_{\min}, a_{\max}]$) onto the policy grid to approximate the policy function $g(a_i, z_j)$.
-
-Given the policy function $g(a_i, z_j)$ and the transition matrix of $z$, the pair $(a, z)$ follows a Markov process with transition matrix $\Upsilon$ of dimensions $ij \times ij$. The stationary distribution is then calculated using the eigenvalue method such that
-
-\begin{equation}\label{eq:station}
-    \Upsilon^\top \phi(a_i, z_j) = \phi(a_i, z_j)
-\end{equation}
-
-and $\sum_{i} \phi_i = 1$, where $\phi(a_i, z_j)$ is the stationary distribution with dimensions $ij \times 1$. The stationary distribution is the unit left eigenvector of $\Upsilon$, normalized to sum to one. Uniqueness is then verified.
+The equilibrium interest rate is $r^* \approx -0.044$. The negative rate reflects
+the precautionary savings motive: households accumulate assets even at negative
+real returns, so the bond market clears below the risk-free rate $1/\beta - 1 \approx 0.042$
+that would prevail under complete markets. The gap between $r^*$ and $1/\beta-1$
+measures the precautionary savings wedge.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\linewidth]{../programs/figs/stationary_eigen.png}
-    \caption{Stationary distribution of state variables vs.\ wealth}
-    \label{fig:stationary_vs_wealth}
+    \includegraphics[width=0.75\linewidth]{../programs/figs/Value_Function_graph.png}
+    \caption{Value function $V(a,z)$ for each income state $z_j$. The function is
+    increasing and concave in $a$; higher income states shift it uniformly upward.}
+    \label{fig:v_fxn}
 \end{figure}
 
-This stationary distribution is unique and took $3.46$ seconds to compute. The net demand for assets is $-2.4999 \times 10^7 \approx 0$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../programs/figs/Policy_fxn_graph.png}
+    \caption{Savings policy function $g(a,z)$ for low and high income states, with
+    the 45-degree line $a'=a$ shown dashed. Households with assets below the
+    crossing point dissave; above it they accumulate. Higher income states shift
+    the policy function upward.}
+    \label{fig:policy_fxn}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../programs/figs/Phi_Dist_graph.png}
+    \caption{Stationary distribution $\phi(a,z)$ for low and high income states.
+    The distribution is concentrated near the borrowing limit with a thin right tail,
+    typical of incomplete-market models.}
+    \label{fig:phi_dist}
+\end{figure}
+
+The lower end of the wealth grid (the borrowing limit $a_{\min} \approx -1.30$) is
+binding for a non-trivial fraction of households: the precautionary motive is not
+strong enough to keep all agents away from the constraint at this interest rate.
+The upper end is not binding; the policy function lies strictly below $a_{\max}$
+for all $(a_i, z_j)$ and the stationary distribution has negligible mass near $a_{\max}$.
+
+% ============================================================
+\section{The Aiyagari Model}
+% ============================================================
+
+The Aiyagari (1994) model extends the Huggett framework to a production economy.
+Households face the same problem as above, but $z_t$ now represents idiosyncratic
+log-labour supply and factor prices are determined by a representative firm. The
+budget constraint becomes
+\begin{equation*}
+    c_t + a_{t+1} = (1+r)a_t + w\exp(z_t), \quad c_t \geq 0, \quad a_{t+1} \geq 0,
+\end{equation*}
+with borrowing limit set to zero. A representative firm with production function
+$F(K,L) = K^\alpha L^{1-\alpha}$ rents capital and labour competitively, implying
+\begin{equation*}
+    r = \alpha K^{\alpha-1} L^{1-\alpha} - \delta, \qquad
+    w = (1-\alpha) K^\alpha L^{-\alpha}.
+\end{equation*}
+Aggregate labour is $L = \mathbb{E}[\exp(z)]$ under the stationary distribution
+of the income process. Inverting the first firm FOC gives
+\begin{equation*}
+    K(r) = \left(\frac{\alpha L^{1-\alpha}}{r+\delta}\right)^{\frac{1}{1-\alpha}},
+\end{equation*}
+and equilibrium capital $K^*$ satisfies
+\begin{equation*}
+    K^* = \mathcal{A}(r^*, w^*) \;:=\; \sum_i\sum_j a_i\,\phi(a_i,z_j).
+\end{equation*}
+Additional parameters are $\alpha = 0.36$, $\delta = 0.10$, $a_{\max} = 60$;
+all other parameters are as in the Huggett model.
 
 % ------------------------------------------------------------
-\subsection{Net Demand Using Simulation}
+\subsection{Algorithm}
 % ------------------------------------------------------------
 
-The net demand for assets using this method is $0.0017$ and took $28.96$ seconds.
+Equilibrium is found by bisecting on the capital stock $K$ directly. At each
+candidate $K$, factor prices are computed from the firm FOCs, the household problem
+is solved (using the same VFI $+$ Howard algorithm as above), and aggregate asset
+demand $\mathcal{A}(r(K), w(K))$ is evaluated. The excess demand function
+\begin{equation*}
+    \text{ED}(K) = \mathcal{A}(r(K),w(K)) - K
+\end{equation*}
+is decreasing in $K$ (higher capital lowers $r$, weakening the saving incentive),
+so bisection is well-defined. We terminate when $|K_{\text{high}} - K_{\text{low}}| < 10^{-4}$.
+
+Since the household solver treats $\exp(z)$ as labour income internally, we rescale
+the income grid as $\tilde{z} = z + \log w$ before passing it to \texttt{f\_spe},
+so that $\exp(\tilde{z}) = w\exp(z)$ gives the correct wage income without
+modifying the solver.
+
+% ------------------------------------------------------------
+\subsection{Results}
+% ------------------------------------------------------------
+
+The table below summarises equilibrium outcomes. The equilibrium
+interest rate $r^*$ lies below the risk-free rate $1/\beta-1$ by the precautionary
+savings wedge; relative to the complete-markets steady state the Aiyagari economy
+features a higher capital stock because the precautionary motive drives additional saving.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+    \toprule
+    Statistic & Symbol & Value \\
+    \midrule
+    Equilibrium capital       & $K^*$              & \textit{[from code]} \\
+    Equilibrium interest rate & $r^*$              & \textit{[from code]} \\
+    Equilibrium wage          & $w^*$              & \textit{[from code]} \\
+    Output                    & $Y^*$              & \textit{[from code]} \\
+    Capital-output ratio      & $K^*/Y^*$          & \textit{[from code]} \\
+    Market clearing error     & $\mathcal{A} - K^*$& $\approx 0$ \\
+    \bottomrule
+\end{tabular}
+\caption{Aiyagari equilibrium outcomes.}
+\label{tab:aiyagari_results}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../programs/figs/Aiyagari_ValueFunction.png}
+    \caption{Value function in the Aiyagari equilibrium for low, median, and high
+    income states. As in the Huggett model, $V$ is increasing and concave in $a$.}
+    \label{fig:aiyagari_vfxn}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../programs/figs/Aiyagari_PolicyFunction.png}
+    \caption{Savings policy function $g(a,z)$ in the Aiyagari equilibrium.
+    High-income households save above the 45-degree line; low-income households
+    at the natural borrowing limit $a_{\min}=0$ save exactly zero.}
+    \label{fig:aiyagari_policy}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{../programs/figs/Aiyagari_WealthDist.png}
+    \caption{Marginal stationary wealth distribution $\phi(a) = \sum_j \phi(a,z_j)$
+    in the Aiyagari equilibrium. The distribution is right-skewed with a mass point
+    at $a_{\min}=0$.}
+    \label{fig:aiyagari_dist}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\linewidth]{../programs/figs/Aiyagari_Lorenz.png}
+    \caption{Lorenz curve for wealth in the Aiyagari equilibrium.}
+    \label{fig:lorenz}
+\end{figure}
+
+The Gini coefficient and top wealth shares are computed from the marginal distribution
+$\phi(a)$. The Gini is
+\begin{equation*}
+    \text{Gini} = 1 - 2\int_0^1 L(F)\,\mathrm{d}F,
+\end{equation*}
+where $L(F)$ is the Lorenz curve, evaluated numerically via the trapezoidal rule.
+Top-$p$\% shares are $1 - L(1 - p/100)$.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+    \toprule
+    Statistic & Model & US Data \\
+    \midrule
+    Gini coefficient & \textit{[from code]} & $\approx 0.78$ \\
+    Top 10\% share   & \textit{[from code]} & $\approx 0.73$ \\
+    Top 1\% share    & \textit{[from code]} & $\approx 0.33$ \\
+    \bottomrule
+\end{tabular}
+\caption{Wealth inequality in the Aiyagari model versus US data
+(Wolff, 2017; Survey of Consumer Finances).}
+\label{tab:inequality}
+\end{table}
+
+Standard Aiyagari models with CRRA utility and an AR(1) income process typically
+generate Gini coefficients of $0.35$--$0.45$, well below the US value of $\approx 0.78$.
+The discrepancy arises because the model abstracts from features important for the upper
+tail, including entrepreneurial risk (Quadrini, 2000), life-cycle heterogeneity
+(Huggett, 1996; De Nardi, 2004), luxury bequest motives (De Nardi, 2004), and
+heterogeneous returns to capital (Benhabib et al., 2019).
+
+The upper bound $a_{\max} = 60$ is not binding: the policy function lies strictly
+below $a_{\max}$ and the stationary distribution has negligible mass there,
+confirming the grid is sufficiently wide. The lower bound $a_{\min} = 0$ is binding
+for low-income households, as expected.
 
 % ============================================================
 \section{Description of Code}
 % ============================================================
 
-Please run \texttt{PS3\_run.m}. The code is formatted so that the computer does not need to re-simulate every time; instead it loads previously generated and saved results. To see the code run from scratch (without loading saved results), delete the \texttt{results} folder found in \texttt{./programs/}. A PDF (and \texttt{.tex}) version of the output is also included (\texttt{PS3\_run.pdf}).
+Please run \texttt{PS4\_hugget.m} for the Huggett model and \texttt{PS4\_aiyagari.m}
+for the Aiyagari model. Both scripts cache intermediate results in a \texttt{results/}
+folder; delete this folder to rerun from scratch. Figures are saved to \texttt{figs/}.
 
 % ------------------------------------------------------------
-\subsection{Main}
+\subsection{Main Files}
 % ------------------------------------------------------------
 
 \vspace{0.5cm}
@@ -129,18 +290,22 @@ Please run \texttt{PS3\_run.m}. The code is formatted so that the computer does 
     \hline
     \textbf{File} & \textbf{Description} & \textbf{Dependencies} \\
     \hline
-    \texttt{PS3\_run.m} & Run file for the problem set
-        & \texttt{PS3\_Q1\_HPI.m}, \texttt{PS3\_Q1\_EGM.m}, \texttt{PS3\_Q2.m} \\
+    \texttt{PS4\_hugget.m} &
+        Main script for Huggett model: sets parameters, runs bisection to find $r^*$,
+        solves model at equilibrium, plots value function, policy function, and
+        stationary distribution, and checks grid binding &
+        \texttt{f\_spe.m}, \texttt{f\_nad.m}, \texttt{rouwenhorst.m} \\
     \hline
-    \texttt{PS3\_run.pdf} & PDF output of \texttt{PS3\_run.m}
-        & \texttt{PS3\_run.m} \\
-    \hline
-    \texttt{PS3.pdf} & Problem set & \\
+    \texttt{PS4\_aiyagari.m} &
+        Main script for Aiyagari model: computes aggregate labour $L$, bisects on $K$
+        to find $K^*$, solves model at equilibrium prices, computes Gini coefficient
+        and top wealth shares, and plots all figures &
+        \texttt{f\_spe.m}, \texttt{f\_nad.m}, \texttt{rouwenhorst.m} \\
     \hline
 \end{tabularx}
 
 % ------------------------------------------------------------
-\subsection{Question 1: Howard Policy Iteration}
+\subsection{Solver Functions}
 % ------------------------------------------------------------
 
 \vspace{0.5cm}
@@ -148,70 +313,20 @@ Please run \texttt{PS3\_run.m}. The code is formatted so that the computer does 
     \hline
     \textbf{File} & \textbf{Description} & \textbf{Dependencies} \\
     \hline
-    \texttt{PS3\_Q1\_HPI.m} & Sets up parameters for VFI and implements Howard Policy Iteration for $M \in \{5, 10, 20\}$
-        & \texttt{rouwenhorst.m}, \texttt{polynomial\_grid.m}, \texttt{howard\_policy\_improvement.m} \\
+    \texttt{f\_spe.m} &
+        \texttt{f\_spe.m} &
+        Stationary Partial Equilibrium solver. Takes income grid, transition
+        matrix, utility handles, parameters, and asset grids; returns value
+        function $V$, savings policy $g$, stationary distribution $\phi$,
+        and net asset demand $\mathcal{A}$. Implements VFI with $M=30$
+        Howard improvement steps. &
+        \texttt{mc\_invdist} (local) \\
     \hline
-    \texttt{howard\_policy\_improvement.m} &
-        Runs Howard policy improvement algorithm to solve for value and policy functions; iteratively updates value function using fixed-policy iteration before returning to the VFI loop
-        & \texttt{VFI\_calc.m}, \texttt{policy\_calc.m} \\
-    \hline
-    \texttt{VFI\_calc.m} &
-        Solves the Bellman equation for each $(a_i, z_j)$ pair to obtain updated value and policy grids
-        & \texttt{cubic\_spline\_interpolation.m} \\
-    \hline
-    \texttt{policy\_calc.m} &
-        Policy function iteration: updates the value grid $V^{n+1}$ and policy grid $a'$ for each $(a_i, z_j)$ pair
-        & \texttt{cubic\_spline\_interpolation.m} \\
-    \hline
-\end{tabularx}
-
-% ------------------------------------------------------------
-\subsection{Question 1: Endogenous Grid Method}
-% ------------------------------------------------------------
-
-\vspace{0.5cm}
-\begin{tabularx}{\linewidth}{|X|X|X|}
-    \hline
-    \textbf{File} & \textbf{Description} & \textbf{Dependencies} \\
-    \hline
-    \texttt{PS3\_Q1\_EGM.m} &
-        Sets up parameters and implements the Endogenous Grid Method
-        & \texttt{rouwenhorst.m}, \texttt{polynomial\_grid.m}, \texttt{compute\_EGM.m}, \texttt{calc\_unconstrained.m}, \texttt{calc\_constrained.m}, \texttt{cubic\_spline\_interpolation.m} \\
-    \hline
-    \texttt{compute\_EGM.m} &
-        EGM backward step: given the exogenous grid $a'$ and marginal utility grid $\mu(a',z) = c(a',z)^{-\gamma}$, recovers the endogenous current-period wealth grid $a(a',z)$ by inverting the Euler equation
-        & \\
-    \hline
-    \texttt{calc\_unconstrained.m} &
-        Unconstrained EGM update: interpolates $V$ from the endogenous wealth grid back onto the fixed exogenous grid
-        & \texttt{cubic\_spline\_interpolation.m} \\
-    \hline
-    \texttt{calc\_constrained.m} &
-        Evaluates the Bellman equation for all $a_i$ under the constrained policy $a' = a_{\min}$ (borrowing limit)
-        & \\
-    \hline
-\end{tabularx}
-
-% ------------------------------------------------------------
-\subsection{Question 2}
-% ------------------------------------------------------------
-
-\vspace{0.5cm}
-\begin{tabularx}{\linewidth}{|X|X|X|}
-    \hline
-    \textbf{File} & \textbf{Description} & \textbf{Dependencies} \\
-    \hline
-    \texttt{PS3\_Q2.m} &
-        Calculates the state transition matrix and stationary distribution; simulates the Markov chain and computes asset demand
-        & \texttt{rouwenhorst.m}, \texttt{cubic\_spline\_interpolation.m}, \texttt{mc\_invdist.m}, \texttt{simulate\_markov.m}, \texttt{simulate\_a.m} \\
-    \hline
-    \texttt{simulate\_markov.m} &
-        Simulates the Markov chain from the state transition matrix
-        & \texttt{mc\_invdist.m} \\
-    \hline
-    \texttt{simulate\_a.m} &
-        Simulates wealth and sets initial state to the borrowing limit
-        & \\
+    \texttt{f\_nad.m} &
+        Net Asset Demand wrapper. Calls \texttt{f\_spe} and returns only
+        $\mathcal{A}(r) = \sum_{i,j} a_i \phi(a_i, z_j)$; useful for bisection
+        routines that require a scalar-valued function &
+        \texttt{f\_spe.m} \\
     \hline
 \end{tabularx}
 
@@ -225,16 +340,13 @@ Please run \texttt{PS3\_run.m}. The code is formatted so that the computer does 
     \textbf{File} & \textbf{Description} & \textbf{Dependencies} \\
     \hline
     \texttt{rouwenhorst.m} &
-        Rouwenhorst's method for discretizing an AR(1) process
-        & \\
+        Rouwenhorst's method for discretising an AR(1) process; returns the
+        grid $z \in \mathbb{R}^{n_z}$ and transition matrix $\Pi \in \mathbb{R}^{n_z \times n_z}$ & \\
     \hline
-    \texttt{cubic\_spline\_interpolation.m} &
-        Cubic spline interpolation between grid points
-        & \\
-    \hline
-    \texttt{mc\_invdist.m} &
-        Computes the invariant distribution of a Markov chain with transition matrix $\Pi$
-        & \\
+    \texttt{mc\_invdist.m} (local in \texttt{f\_spe}) &
+        Computes the invariant distribution of a Markov chain as the normalised
+        unit left eigenvector of $\Pi$; issues a warning if the unit eigenvalue
+        is not unique & \\
     \hline
 \end{tabularx}
 

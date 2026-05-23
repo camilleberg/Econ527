@@ -1,0 +1,429 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Local Functions
+\end{itemize}
+\begin{verbatim}
+function [v_fxn, policy_fxn, phi_dist, net_assets] = f_spe(z_grid, z_prob, u_fxn, u_prime_inv, u_prime, Params, a_next_grid, a_fine_grid)
+
+% [v_fxn, policy_fxn, phi_dist, net_assets] =
+%       f_spe(r, markov_chain, u_fxn, u_prime_inv, Params, a_grid, a_fine_grid)
+%
+% Computes the stationary partial equilibrium of the Aiyagari / Bewley model
+% using the Endogenous Grid Method (EGM) and returns:
+%
+%   v_fxn      - (n_a_fine x n_z)  value function on fine grid
+%   policy_fxn - (n_a_fine x n_z)  savings policy function on fine grid
+%   phi_dist   - (n_a_fine x n_z)  stationary joint distribution phi(a,z)
+%   net_assets - scalar, sum_i sum_j a_i * phi(a_i, z_j)  (net asset demand)
+%
+% Inputs:
+%   r            - real interest rate
+%   markov_chain - cell or struct: {z_grid (n_z x 1), z_prob (n_z x n_z)}
+%   u_fxn        - utility function handle: u_fxn(c, Params)
+%   u_prime_inv  - handle for (u')^{-1}: u_prime_inv(mu, Params)
+%   Params       - struct with fields:
+%                    .a_min, .a_max, .n_a, .curve  (grid)
+%                    .gamma, .beta                 (preferences)
+%                    .n_z                          (income states)
+%                    .max_iter, .e_stop            (convergence)
+%   a_grid       - (n_a x 1) coarse wealth grid  [not used internally;
+%                  kept for interface compatibility]
+%   a_fine_grid  - (n_a_fine x 1) fine grid for distribution / policy output
+
+% ── Setup ─────────────────────────────────────────────────────────────────
+
+R        = 1 + Params.r;
+
+u_fxn_h       = @(c)  u_fxn(c, Params);
+u_prime_inv_h = @(mu) u_prime_inv(mu, Params);
+u_prime_h     = @(c) u_prime(c, Params);
+
+% ── Initialisation ────────────────────────────────────────────────────────
+
+a_1    = a_next_grid(1);
+
+% Initial consumption: cash-on-hand minus minimum saving
+c_init = zeros(Params.n_a, Params.n_z);
+for iz = 1:Params.n_z
+    c_init(:, iz) = max(R * a_next_grid + exp(z_grid(iz)) - a_1, 1e-6);
+end
+
+mu_grid = u_prime_h(c_init);
+
+% Initial value function: perpetual consumption, discounted
+V_grid = zeros(Params.n_a, Params.n_z);
+for iz = 1:Params.n_z
+    u0 = u_fxn_h(c_init(:, iz));
+    V_grid(:, iz) = u0 / (1 - Params.beta);
+end
+
+policy_grid = repmat(a_next_grid, 1, Params.n_z);
+
+error_val = Inf;
+iteration = 0;
+
+% ── EGM iteration ─────────────────────────────────────────────────────────
+tic;
+while error_val > Params.e_stop && iteration < Params.max_iter
+
+    V_grid_old  = V_grid;
+    mu_grid_old = mu_grid;
+
+    %── Step 1: EGM backward step ─────────────────────────────────────────
+    [a_current_grid, c_current_grid] = compute_EGM( ...
+        Params, z_grid, z_prob, a_next_grid, mu_grid_old, u_prime_inv_h);
+
+    %── Step 2: classify constrained / unconstrained points ───────────────
+    constrained_mask = a_current_grid <= a_1;   % a_1 = a_next_grid(1)
+    unconstrained_mask = ~constrained_mask;
+
+    %── Step 3: value function update ─────────────────────────────────────
+    V_grid_unconstrained = calc_unconstrained( ...
+        Params, a_current_grid, V_grid_old, a_next_grid, unconstrained_mask);
+
+    [V_grid_constrained, ~] = calc_constrained( ...
+        Params, z_grid, z_prob, a_next_grid, V_grid_old, u_fxn_h);
+
+    % Merge: constrained values override unconstrained interpolation
+    V_grid = V_grid_unconstrained;
+    V_grid(constrained_mask) = V_grid_constrained(constrained_mask);
+
+    %── Step 4: update policy and marginal utility ────────────────────────
+    c_new = zeros(Params.n_a, Params.n_z);
+
+    for iz = 1:Params.n_z
+        unc = unconstrained_mask(:, iz);
+        con = constrained_mask(:, iz);
+
+        % Unconstrained: spline-interpolate c from endogenous grid
+        a_endog = a_current_grid(unc, iz);
+        c_endog = c_current_grid(unc, iz);
+        [a_s, si] = sort(real(a_endog));
+        c_s       = c_endog(si);
+        [a_u, ui] = unique(a_s);
+        c_u       = c_s(ui);
+        if length(a_u) >= 2
+            c_new(unc, iz) = max( ...
+                cubic_spline_interpolation(a_u, c_u, a_next_grid(unc)), 1e-10);
+        else
+            c_new(unc, iz) = max(c_endog, 1e-10);
+        end
+
+        % Constrained: c = R*a + exp(z) - a_1  (bind at borrowing limit)
+        c_new(con, iz) = max(R * a_next_grid(con) + exp(z_grid(iz)) - a_1, 1e-10);
+
+        % Policy: unconstrained saves a_current (endogenous), constrained saves a_1
+        policy_grid(unc, iz) = a_next_grid(unc); % changed per ai
+        policy_grid(con, iz) = a_1;
+    end
+
+    mu_grid = max(c_new, 1e-10) .^ (-Params.gamma);
+
+    %── Step 5: convergence ────────────────────────────────────────────────
+    error_val = max(abs(V_grid(:) - V_grid_old(:)));
+    iteration = iteration + 1;
+end
+time_egm = toc;
+
+
+fprintf('EGM converged after %d iterations in %.2f seconds (error = %.2e)\n', ...
+        iteration, time_egm, error_val);
+
+% ── Interpolate value and policy onto fine grid ───────────────────────────
+
+n_a_fine   = length(a_fine_grid);
+
+v_fxn      = zeros(n_a_fine, Params.n_z);
+policy_fxn = zeros(n_a_fine, Params.n_z);
+
+for iz = 1:Params.n_z
+    v_fxn(:, iz)      = cubic_spline_interpolation(a_next_grid, V_grid(:, iz),      a_fine_grid);
+    policy_fxn(:, iz) = cubic_spline_interpolation(a_next_grid, policy_grid(:, iz), a_fine_grid);
+end
+
+% ── Build state-transition matrix on fine grid ────────────────────────────
+
+numstates = n_a_fine * Params.n_z;
+policy_P  = zeros(numstates);
+
+for iz = 1:Params.n_z
+    for ia = 1:n_a_fine
+        s_from  = (iz - 1) * n_a_fine + ia;
+
+        a_prime = policy_fxn(ia, iz);
+        a_prime = max(a_fine_grid(1), min(a_fine_grid(end), a_prime));
+
+        % Index of the grid point immediately to the left of a_prime
+        ik = min(find(a_fine_grid <= a_prime, 1, 'last'), n_a_fine - 1);
+
+        % Linear interpolation weights
+        w_lo = (a_fine_grid(ik+1) - a_prime)   / (a_fine_grid(ik+1) - a_fine_grid(ik));
+        w_hi = (a_prime           - a_fine_grid(ik)) / (a_fine_grid(ik+1) - a_fine_grid(ik));
+
+        for iz_next = 1:Params.n_z
+            pi_z  = z_prob(iz, iz_next);
+            s_lo  = (iz_next - 1) * n_a_fine + ik;
+            s_hi  = (iz_next - 1) * n_a_fine + (ik + 1);
+            policy_P(s_lo, s_from) = policy_P(s_lo, s_from) + pi_z * w_lo;
+            policy_P(s_hi, s_from) = policy_P(s_hi, s_from) + pi_z * w_hi;
+        end
+    end
+end
+
+% ── Stationary distribution via eigenvalue method ─────────────────────────
+% mc_invdist already issues a warning if the unit eigenvalue is not unique.
+
+stationary_eigen = mc_invdist(policy_P');   % (numstates x 1), sums to 1
+
+% Reshape to (n_a_fine x n_z)
+phi_dist = reshape(stationary_eigen, n_a_fine, Params.n_z);
+
+% ── Net asset demand ──────────────────────────────────────────────────────
+% Net demand = sum_i sum_j  a_i * phi(a_i, z_j)
+% = a_fine_grid' * (sum over z of phi_dist)
+
+lambda_marginal_a = sum(phi_dist, 2);              % (n_a_fine x 1)
+net_assets        = sum(a_fine_grid(:) .* lambda_marginal_a);
+
+
+end
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Not enough input arguments.
+
+Error in f_spe (line 30)
+R        = 1 + Params.r;
+               ^^^^^^^^\end{verbatim} \color{black}
+    
+
+\subsection*{Local Functions}
+
+\begin{par}
+-- cubic spline ──────────────────────────────────────────────────────
+\end{par} \vspace{1em}
+\begin{verbatim}
+function V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
+
+% [V_interp = cubic_spline_interpolation(K_grid, V_grid, K_query)
+%
+%  Cubic spline interpolation between grid points (for value function)
+%
+% K_grid: existing / known grid points (e.g. asset grid)
+% V_grid: value function evaluated at K_grid points / or function to be eval at
+% K_query: new grid points where we want to evaluate the value function
+%
+% reference: https://www.mathworks.com/help/matlab/ref/spline.html
+
+    V_grid_clean = V_grid;
+    V_grid_clean(~isfinite(V_grid_clean)) = -1e10;
+
+    spline_interp = spline(K_grid, V_grid_clean);
+    V_interp = ppval(spline_interp, K_query);
+end
+
+
+% -- compute EGM ──────────────────────────────────────────────────────
+function [a_current_grid, c_current_grid] = compute_EGM(Params, z_grid, z_prob, a_next_grid, mu_grid, u_prime_inv)
+
+% [a_current_grid, c_current_grid] = compute_EGM(Params, z_grid, z_prob,
+%                                                  a_next_grid, mu_grid, u_prime_inv)
+%
+% EGM backward step. Given the exogenous grid a' and the current marginal
+% utility grid mu(a',z) = u'(c(a',z)) = c(a',z)^{-gamma}, recovers the
+% endogenous current-period wealth grid a(a',z) by inverting the Euler eq:
+%
+%   Euler:  u'(c) = beta*(1+r)*E[u'(c(a',z'))|z]
+%   =>  c(a',z) = [beta*(1+r)*E[mu(a',z')|z]]^{-1/gamma}
+%   =>  a(a',z) = (c + a' - exp(z)) / (1+r)        [budget constraint]
+% ───────────────────────────────────────────────────────────────────────────
+%
+% Inputs:
+%   Params      - parameter struct (needs .beta, .r, .n_a, .n_z)
+%   z_grid      - (n_z x 1) discretised log-income grid
+%   z_prob      - (n_z x n_z) transition matrix, rows sum to 1
+%   a_next_grid - (n_a x 1) exogenous savings grid
+%   mu_grid     - (n_a x n_z) marginal utility u'(c(a',z)) on exog grid
+%   u_prime_inv - function handle: inverse of u', i.e. (u')^{-1}
+%
+% Outputs:
+%   a_current_grid - (n_a x n_z) endogenous current-wealth grid
+%   c_current_grid - (n_a x n_z) consumption implied by Euler equation
+
+    beta = Params.beta;
+    R    = 1 + Params.r;
+
+    % EMU(ia,iz) = sum_{iz'} pi(iz,iz') * mu(ia,iz')
+    % mu_grid is (n_a x n_z), z_prob is (n_z x n_z)
+    % EMU = mu_grid * z_prob'   gives (n_a x n_z) — correct orientation
+    EMU = mu_grid * z_prob';
+
+    a_current_grid = zeros(Params.n_a, Params.n_z);
+    c_current_grid = zeros(Params.n_a, Params.n_z);
+
+    for ia = 1:Params.n_a
+        a_next = a_next_grid(ia);
+        for iz = 1:Params.n_z
+            z_curr = z_grid(iz);
+
+
+            % Euler: u'(c) = beta*R * E[mu]  =>  c = (u')^{-1}(beta*R * E[mu])
+            c_curr = max(u_prime_inv(beta * R * EMU(ia, iz)), 1e-10);
+
+            % Budget constraint: c + a' = R*a + exp(z)  =>  a = (c + a' - exp(z)) / R
+            a_curr = (a_next - exp(z_curr) + c_curr) / R;
+
+            a_current_grid(ia, iz) = a_curr;
+            c_current_grid(ia, iz) = c_curr;
+        end
+    end
+end
+
+% -- calc_contrained ──────────────────────────────────────────────────────
+
+function [V_grid_constrained, policy_grid_constrained] = calc_constrained( ...
+            Params, z_grid, z_prob, a_next_grid, V_grid_old, u_fxn)
+
+% [V_grid_constrained, policy_grid_constrained] = calc_constrained(...)
+%
+% Evaluates the Bellman equation for ALL current-wealth levels a_i under
+% the CONSTRAINED policy a' = a_next_grid(1) = a_min (borrowing constraint).
+%
+% Used for grid points where the unconstrained EGM solution gives
+% a_current <= a_min, i.e. the household would like to borrow more than
+% the constraint permits.
+%
+% Formula:
+%   V(a_i, z_j) = u(R*a_i + exp(z_j) - a_1) + beta * E[V(a_1, z') | z_j]
+%
+% where a_i are the CURRENT asset holdings (= a_next_grid used as the
+% current-wealth vector in this evaluation).
+%
+
+%
+% ── Inputs ──────────────────────────────────────────────────────────────────
+%   Params      - parameter struct (.r, .beta, .n_a, .n_z)
+%   z_grid      - (n_z x 1) log-income grid
+%   z_prob      - (n_z x n_z) transition matrix
+%   a_next_grid - (n_a x 1) exogenous savings grid; a_1 = a_next_grid(1)
+%   V_grid_old  - (n_a x n_z) value function on exogenous grid (previous iter)
+%   u_fxn       - function handle: u_fxn(c, Params)
+
+    a_1 = a_next_grid(1);   % constrained saving = grid minimum
+    R   = 1 + Params.r;
+
+    % Continuation value at a_1 for each current income state:
+    %   EV_a1(iz) = sum_{iz'} pi(iz, iz') * V(a_1, iz')
+    % V_grid_old(1,:) is V evaluated at a' = a_1 for every income state iz'.
+    EV_a1 = z_prob * V_grid_old(1, :)';   % (n_z x 1)
+
+    V_grid_constrained      = zeros(Params.n_a, Params.n_z);
+    policy_grid_constrained = ones(Params.n_a,  Params.n_z) * a_1;
+
+    for iz = 1:Params.n_z
+        z_curr = z_grid(iz);
+
+        % Consumption at each current-wealth level a_i when a' is fixed at a_1:
+        %   c_i = R * a_i + exp(z) - a_1
+        % Here a_next_grid stands in for the current-wealth vector a_i
+        % (the exogenous grid is used for both roles in EGM).
+        c = R * a_next_grid + exp(z_curr) - a_1;   % (n_a x 1)
+
+        u = u_fxn(c);
+
+        % EV_a1(iz) is a scalar — the same continuation value for all ia
+        % because every constrained household saves exactly a_1.
+        V_grid_constrained(:, iz) = u + Params.beta * EV_a1(iz);
+    end
+end
+
+% -- calc_uncontrained ──────────────────────────────────────────────────────
+function [V_grid_unconstrained] = calc_unconstrained(Params, a_current_grid, V_grid_old, a_next_grid, unconstrained_mask)
+
+% [V_grid_unconstrained] = calc_unconstrained(...)
+%
+% Unconstrained EGM update: interpolates V from the endogenous grid
+% a_current_grid back onto the fixed exogenous grid a_next_grid.
+%
+% For each income state iz, the endogenous grid points a_current_grid(:,iz)
+% are the x-knots and V_grid_old(:,iz) are the corresponding values.
+% We fit a spline and evaluate at the fixed a_next_grid query points.
+%
+% Inputs:
+%   a_current_grid   - (n_a x n_z) endogenous current-wealth grid from EGM
+%   V_grid_old       - (n_a x n_z) value function on exogenous grid
+%   a_next_grid      - (n_a x 1)   fixed exogenous savings grid
+%   unconstrained_mask - (n_a x n_z) logical, true where a_current > a_min
+
+    V_grid_unconstrained = zeros(Params.n_a, Params.n_z);
+
+    for iz = 1:Params.n_z
+        unc_rows = unconstrained_mask(:, iz);
+
+        a_endog = a_current_grid(unc_rows, iz);
+        V_endog = V_grid_old(unc_rows, iz);
+
+        [a_sorted, sort_idx] = sort(a_endog);
+        V_sorted             = V_endog(sort_idx);
+
+        [a_unique, unique_idx] = unique(a_sorted);
+        V_unique               = V_sorted(unique_idx);
+
+        a_unique = real(a_unique);
+        V_unique = real(V_unique);
+
+        % need at least 2 points to interpolate
+        if length(a_unique) < 2
+            V_grid_unconstrained(:, iz) = V_grid_old(:, iz);
+            continue
+        end
+
+        % interpolate on full grid
+        V_grid_unconstrained(:, iz) = cubic_spline_interpolation(a_unique, V_unique, a_next_grid);
+    end
+end
+
+% -- mc_invdist ──────────────────────────────────────────────────────
+function P = mc_invdist(PI)
+
+% P = mc_invdist(PI)
+%
+% Computes invariant distribution P of a Markov chain with transition
+% matrix PI
+
+[V, D] = eig(PI');
+
+ii = find(abs(diag(D) - 1) < 1E-8, 1);      % Find first unit eigenvalue
+
+P = V(:,ii) / sum(V(:,ii));                 % Normalize unit eigenvector
+
+assert(max(abs(P' - P'*PI)) < 1E-12)        % Verify dist. is stationary
+
+if sum(abs(diag(D) - 1) < 1E-8) > 1         % Check for uniqueness
+   warning('P not unique')
+end
+
+end
+\end{verbatim}
+
+
+
+\end{document}
+

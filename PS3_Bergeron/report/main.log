@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.7)  22 MAY 2026 18:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.7.7)  22 MAY 2026 18:35
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/camillebergeron/Documents/GitHub/Econ527/PS4_Bergeron/report/main.tex
-(/Users/camillebergeron/Documents/GitHub/Econ527/PS4_Bergeron/report/main.tex
+**/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex
+(/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-06-09>
 (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/base/article.cls
@@ -546,48 +546,32 @@ Package biblatex Info: ... and expl3
 Package: xparse 2024-08-16 L3 Experimental document command parser
 )
 Package: blx-case-expl3 2025/07/10 v3.21 expl3 case changing code for biblatex
-)) (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
-Package: geometry 2020/01/02 v5.9 Page Geometry
- (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
-Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
-)
-\Gm@cnth=\count452
-\Gm@cntv=\count453
-\c@Gm@tempcnt=\count454
-\Gm@bindingoffset=\dimen192
-\Gm@wd@mp=\dimen193
-\Gm@odd@mp=\dimen194
-\Gm@even@mp=\dimen195
-\Gm@layoutwidth=\dimen196
-\Gm@layoutheight=\dimen197
-\Gm@layouthoffset=\dimen198
-\Gm@layoutvoffset=\dimen199
-\Gm@dimlist=\toks35
-)
-\@quotelevel=\count455
-\@quotereset=\count456
- (./main.aux)
+))
+\@quotelevel=\count452
+\@quotereset=\count453
+
+No file main.aux.
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 32.
-LaTeX Font Info:    ... okay on input line 32.
- (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 30.
+LaTeX Font Info:    ... okay on input line 30.
+(/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
@@ -597,8 +581,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 32.
- (./main.out) (./main.out)
+Package hyperref Info: Link coloring OFF on input line 30.
 \@outlinefile=\write4
 \openout4 = `main.out'.
 
@@ -615,48 +598,13 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'main.bbl' found.
  (./main.bbl)
-Package biblatex Info: Reference section=0 on input line 32.
-Package biblatex Info: Reference segment=0 on input line 32.
-
-*geometry* driver: auto-detecting
-*geometry* detected driver: pdftex
-*geometry* verbose mode - [ preamble ] result:
-* driver: pdftex
-* paper: <default>
-* layout: <same size as paper>
-* layoutoffset:(h,v)=(0.0pt,0.0pt)
-* modes: 
-* h-part:(L,W,R)=(72.26999pt, 469.75502pt, 72.26999pt)
-* v-part:(T,H,B)=(72.26999pt, 650.43001pt, 72.26999pt)
-* \paperwidth=614.295pt
-* \paperheight=794.96999pt
-* \textwidth=469.75502pt
-* \textheight=650.43001pt
-* \oddsidemargin=0.0pt
-* \evensidemargin=0.0pt
-* \topmargin=-37.0pt
-* \headheight=12.0pt
-* \headsep=25.0pt
-* \topskip=10.0pt
-* \footskip=30.0pt
-* \marginparwidth=65.0pt
-* \marginparsep=11.0pt
-* \columnsep=10.0pt
-* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
-* \hoffset=0.0pt
-* \voffset=0.0pt
-* \mag=1000
-* \@twocolumnfalse
-* \@twosidefalse
-* \@mparswitchfalse
-* \@reversemarginfalse
-* (1in=72.27pt=25.4mm, 1cm=28.453pt)
-
-LaTeX Font Info:    Trying to load font information for U+msa on input line 34.
-(/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
+Package biblatex Info: Reference section=0 on input line 30.
+Package biblatex Info: Reference segment=0 on input line 30.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 32.
+ (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 34.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 32.
  (/Users/camillebergeron/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
@@ -664,84 +612,355 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 [1
 
 {/Users/camillebergeron/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<../programs/figs/Value_Function_graph.png, id=71, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Value_Function_graph.png Graphic file (type png)
-<use ../programs/figs/Value_Function_graph.png>
-Package pdftex.def Info: ../programs/figs/Value_Function_graph.png  used on input line 151.
-(pdftex.def)             Requested size: 352.31625pt x 212.43375pt.
+
+LaTeX Warning: File `../programs/figs/Value_Function_graph.png' not found on input line 101.
+
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:101: Package pdftex.def Error: File `../programs/figs/Value_Function_graph.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.101 ..../programs/figs/Value_Function_graph.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
 
 
 [2]
-<../programs/figs/Policy_fxn_graph.png, id=85, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Policy_fxn_graph.png Graphic file (type png)
-<use ../programs/figs/Policy_fxn_graph.png>
-Package pdftex.def Info: ../programs/figs/Policy_fxn_graph.png  used on input line 169.
-(pdftex.def)             Requested size: 352.31625pt x 212.43375pt.
+
+LaTeX Warning: File `../programs/figs/Policy_fxn_graph.png' not found on input line 109.
 
 
-[3 <../programs/figs/Value_Function_graph.png (PNG copy)> <../programs/figs/Policy_fxn_graph.png (PNG copy)>]
-<../programs/figs/Phi_Dist_graph.png, id=95, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Phi_Dist_graph.png Graphic file (type png)
-<use ../programs/figs/Phi_Dist_graph.png>
-Package pdftex.def Info: ../programs/figs/Phi_Dist_graph.png  used on input line 185.
-(pdftex.def)             Requested size: 352.31625pt x 212.43375pt.
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:109: Package pdftex.def Error: File `../programs/figs/Policy_fxn_graph.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.109 ...h]{../programs/figs/Policy_fxn_graph.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-[4 <../programs/figs/Phi_Dist_graph.png (PNG copy)>]
-<../programs/figs/Aiyagari_ValueFunction.png, id=110, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Aiyagari_ValueFunction.png Graphic file (type png)
-<use ../programs/figs/Aiyagari_ValueFunction.png>
-Package pdftex.def Info: ../programs/figs/Aiyagari_ValueFunction.png  used on input line 327.
-(pdftex.def)             Requested size: 352.31625pt x 212.43375pt.
 
+[3]
+
+LaTeX Warning: File `../programs/figs/Phi_Dist_graph.png' not found on input line 119.
+
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:119: Package pdftex.def Error: File `../programs/figs/Phi_Dist_graph.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.119 ...dth]{../programs/figs/Phi_Dist_graph.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+
+[4]
 
 [5]
-<../programs/figs/Aiyagari_PolicyFunction.png, id=124, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Aiyagari_PolicyFunction.png Graphic file (type png)
-<use ../programs/figs/Aiyagari_PolicyFunction.png>
-Package pdftex.def Info: ../programs/figs/Aiyagari_PolicyFunction.png  used on input line 335.
-(pdftex.def)             Requested size: 352.31625pt x 212.43375pt.
-<../programs/figs/Aiyagari_WealthDist.png, id=126, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Aiyagari_WealthDist.png Graphic file (type png)
-<use ../programs/figs/Aiyagari_WealthDist.png>
-Package pdftex.def Info: ../programs/figs/Aiyagari_WealthDist.png  used on input line 352.
-(pdftex.def)             Requested size: 352.31625pt x 212.43375pt.
+
+LaTeX Warning: File `../programs/figs/Aiyagari_ValueFunction.png' not found on input line 209.
 
 
-[6 <../programs/figs/Aiyagari_ValueFunction.png (PNG copy)> <../programs/figs/Aiyagari_PolicyFunction.png (PNG copy)>]
-<../programs/figs/Aiyagari_Lorenz.png, id=137, 715.9548pt x 431.6928pt>
-File: ../programs/figs/Aiyagari_Lorenz.png Graphic file (type png)
-<use ../programs/figs/Aiyagari_Lorenz.png>
-Package pdftex.def Info: ../programs/figs/Aiyagari_Lorenz.png  used on input line 367.
-(pdftex.def)             Requested size: 305.33789pt x 184.10925pt.
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:209: Package pdftex.def Error: File `../programs/figs/Aiyagari_ValueFunction.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.209 ...programs/figs/Aiyagari_ValueFunction.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
 
-[7 <../programs/figs/Aiyagari_WealthDist.png (PNG copy)> <../programs/figs/Aiyagari_Lorenz.png (PNG copy)>]
 
-[8] (./main.aux)
+[6]
+
+LaTeX Warning: File `../programs/figs/Aiyagari_PolicyFunction.png' not found on input line 217.
+
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:217: Package pdftex.def Error: File `../programs/figs/Aiyagari_PolicyFunction.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.217 ...rograms/figs/Aiyagari_PolicyFunction.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+
+[7]
+
+LaTeX Warning: File `../programs/figs/Aiyagari_WealthDist.png' not found on input line 226.
+
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:226: Package pdftex.def Error: File `../programs/figs/Aiyagari_WealthDist.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.226 ...../programs/figs/Aiyagari_WealthDist.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+
+[8]
+
+LaTeX Warning: File `../programs/figs/Aiyagari_Lorenz.png' not found on input line 235.
+
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:235: Package pdftex.def Error: File `../programs/figs/Aiyagari_Lorenz.png' not found: using draft setting.
+
+See the pdftex.def package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.235 ...th]{../programs/figs/Aiyagari_Lorenz.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+
+[9]
+
+[10]
+Underfull \hbox (badness 2057) in paragraph at lines 305--305
+\OT1/cmr/m/n/10 model: sets pa-ram-e-
+ []
+
+
+Underfull \hbox (badness 1122) in paragraph at lines 305--305
+\OT1/cmr/m/n/10 find $\OML/cmm/m/it/10 r[]$\OT1/cmr/m/n/10 , solves model
+ []
+
+
+Underfull \hbox (badness 4366) in paragraph at lines 305--305
+\OT1/cmr/m/n/10 at equi-lib-rium, plots
+ []
+
+
+Underfull \hbox (badness 1194) in paragraph at lines 305--305
+\OT1/cmr/m/n/10 value func-tion, pol-icy
+ []
+
+
+Underfull \hbox (badness 2894) in paragraph at lines 305--305
+\OT1/cmr/m/n/10 ary dis-tri-bu-tion, and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--305
+[]|\OT1/cmtt/m/n/10 f[]spe.m\OT1/cmr/m/n/10 , \OT1/cmtt/m/n/10 f[]nad.m\OT1/cmr/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--305
+[]|\OT1/cmtt/m/n/10 f[]spe.m\OT1/cmr/m/n/10 , \OT1/cmtt/m/n/10 f[]nad.m\OT1/cmr/m/n/10 ,
+ []
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:331: Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.331 \end{tabularx}
+                    
+You have given more \span or & marks than there were
+in the preamble to the \halign or \valign now in progress.
+So I'll assume that you meant to type \cr instead.
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:331: Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.331 \end{tabularx}
+                    
+You have given more \span or & marks than there were
+in the preamble to the \halign or \valign now in progress.
+So I'll assume that you meant to type \cr instead.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+[]|\OT1/cmr/m/n/10 Stationary Par-tial
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 Equi-lib-rium solver.
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 Takes in-come grid,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 tran-si-tion ma-trix,
+ []
+
+
+Underfull \hbox (badness 2762) in paragraph at lines 331--331
+\OML/cmm/m/it/10 V$\OT1/cmr/m/n/10 , sav-ings pol-icy $\OML/cmm/m/it/10 g$\OT1/cmr/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 1082) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 sta-tion-ary dis-tri-bu-tion
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 331--331
+\OML/cmm/m/it/10 ^^^$\OT1/cmr/m/n/10 , and net as-set de-
+ []
+
+
+Underfull \hbox (badness 2111) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 VFI with $\OML/cmm/m/it/10 M \OT1/cmr/m/n/10 = 30$
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 Howard im-prove-ment
+ []
+
+/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex:331: Extra alignment tab has been changed to \cr.
+<recently read> \endtemplate 
+                             
+l.331 \end{tabularx}
+                    
+You have given more \span or & marks than there were
+in the preamble to the \halign or \valign now in progress.
+So I'll assume that you meant to type \cr instead.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+[]|\OT1/cmr/m/n/10 Net As-set De-mand
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 wrap-per. Calls
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmtt/m/n/10 f[]spe \OT1/cmr/m/n/10 and re-
+ []
+
+
+Underfull \hbox (badness 5475) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 turns only $\OMS/cmsy/m/n/10 A\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 r\OT1/cmr/m/n/10 ) =
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 for bi-sec-tion rou-
+ []
+
+
+Underfull \hbox (badness 4805) in paragraph at lines 331--331
+\OT1/cmr/m/n/10 tines that re-quire a
+ []
+
+
+
+[11]
+Underfull \hbox (badness 10000) in paragraph at lines 351--351
+\OT1/cmr/m/n/10 for dis-cretis-ing an
+ []
+
+
+Underfull \hbox (badness 4048) in paragraph at lines 351--351
+\OT1/cmr/m/n/10 the grid $\OML/cmm/m/it/10 z \OMS/cmsy/m/n/10 2 \U/msb/m/n/10 R[]$
+ []
+
+
+Underfull \hbox (badness 1478) in paragraph at lines 351--351
+\OT1/cmr/m/n/10 and tran-si-tion ma-trix
+ []
+
+
+Underfull \hbox (badness 2828) in paragraph at lines 351--351
+[]|\OT1/cmr/m/n/10 Computes the in-vari-
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 351--351
+\OT1/cmr/m/n/10 ant dis-tri-bu-tion of a
+ []
+
+
+Underfull \hbox (badness 1960) in paragraph at lines 351--351
+\OT1/cmr/m/n/10 Markov chain as the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 351--351
+\OT1/cmr/m/n/10 nor-malised unit left
+ []
+
+
+
+[12]
+
+[13] (./main.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-06-09>
  ***********
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 33640D2E2393BDF4B21C3C583C84FC07;1050.
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  4A8C9F152B1C567CAD1F2E35E0609ED1;1407.
+
+Package biblatex Warning: Please (re)run Biber on the file:
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
+
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 19362 strings out of 469826
- 340055 string characters out of 5481426
- 1166521 words of memory out of 5000000
- 47413 multiletter control sequences out of 15000+600000
- 635034 words of font info for 72 fonts, out of 8000000 for 9000
+ 18989 strings out of 469826
+ 340086 string characters out of 5481426
+ 1147486 words of memory out of 5000000
+ 47075 multiletter control sequences out of 15000+600000
+ 635202 words of font info for 73 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 75i,11n,79p,1265b,803s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (8 pages, 526453 bytes).
+ 75i,10n,79p,1265b,803s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on main.pdf (13 pages, 212165 bytes).
 PDF statistics:
- 239 PDF objects out of 1000 (max. 8388607)
- 188 compressed objects within 2 object streams
- 61 named destinations out of 1000 (max. 500000)
- 116 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 178 PDF objects out of 1000 (max. 8388607)
+ 127 compressed objects within 2 object streams
+ 36 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
