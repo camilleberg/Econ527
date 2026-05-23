@@ -1,0 +1,120 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    
+\subsection*{Contents}
+
+\begin{itemize}
+\setlength{\itemsep}{-1ex}
+   \item Questiomn 1: Hugget Model
+   \item Quesion 2: Aiyagari
+\end{itemize}
+\begin{verbatim}
+% Econ 527 Spring 2026
+% HW 4
+% Professor Greaney
+% Written by: Camille Bergeron
+% Due: May 22, 2026
+\end{verbatim}
+
+
+\subsection*{Questiomn 1: Hugget Model}
+
+\begin{verbatim}
+run('programs/PS4_hugget.m'); % run Hugget
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Transition probabilities:
+    0.7351    0.2321    0.0305    0.0021    0.0001    0.0000    0.0000
+    0.0387    0.7453    0.1945    0.0204    0.0011    0.0000    0.0000
+    0.0020    0.0778    0.7514    0.1560    0.0123    0.0004    0.0000
+    0.0001    0.0061    0.1170    0.7535    0.1170    0.0061    0.0001
+    0.0000    0.0004    0.0123    0.1560    0.7514    0.0778    0.0020
+    0.0000    0.0000    0.0011    0.0204    0.1945    0.7453    0.0387
+    0.0000    0.0000    0.0001    0.0021    0.0305    0.2321    0.7351
+
+File exists and skipping equilbrium rate calculation...
+Loading file instead...
+
+Equilibrium r* = -0.044232
+File exists and skipping hugget model calculation...
+Loading file instead...
+Loaded hugget model
+States at lower bound (a_min=-1.3046): 118
+States at upper bound (a_max=65.2287): 0
+\end{verbatim} \color{black}
+    
+\includegraphics [width=4in]{PS4_run_01.eps}
+
+\includegraphics [width=4in]{PS4_run_02.eps}
+
+\includegraphics [width=4in]{PS4_run_03.eps}
+
+
+\subsection*{Quesion 2: Aiyagari}
+
+\begin{verbatim}
+run('programs/PS4_aiyagari.m'); % run Aiyagari
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}Aggregate labour supply L = 1.110326
+K bracket: [2.3839, 16434.7938]
+r bracket: [0.1208, -0.0992]
+Loading cached K*...
+K* = 2.383926  (r* = 0.120761)
+
+Solving full model at K*=2.3839, r*=0.1208, w*=0.8426...
+Loading cached model...
+
+════════════════════════════════════
+  AIYAGARI EQUILIBRIUM SUMMARY
+════════════════════════════════════
+  K*     = 2.3839
+  r*     = 0.1208 (12.08%)
+  w*     = 0.8426
+  Y*     = 1.4619
+  C*     = 1.2235
+  K*/Y*  = 1.6307
+  E[a]   = -0.0000 (should = K* = 2.3839)
+════════════════════════════════════
+
+WEALTH DISTRIBUTION STATISTICS
+────────────────────────────────────
+  Gini coefficient : -0.0000
+  Top 10% share    : -0.0000 (-0.0%)
+  Top 1% share     : -0.0000 (-0.0%)
+────────────────────────────────────
+
+GRID BINDING CHECK
+  States at lower bound (a_min=0.00): 124 / 1050 (11.8%)
+  States at upper bound (a_max=60.00): 0 / 1050 (0.0%)
+
+All figures saved to figs/
+\end{verbatim} \color{black}
+    
+\includegraphics [width=4in]{PS4_run_04.eps}
+
+\includegraphics [width=4in]{PS4_run_05.eps}
+
+\includegraphics [width=4in]{PS4_run_06.eps}
+
+\includegraphics [width=4in]{PS4_run_07.eps}
+
+\includegraphics [width=4in]{PS4_run_08.eps}
+
+
+
+\end{document}
+

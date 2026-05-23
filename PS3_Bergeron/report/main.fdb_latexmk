@@ -1,11 +1,11 @@
 # Fdb version 4
-["biber main"] 1778279275.21411 "main.bcf" "main.bbl" "main" 1779500130.03422 0
-  "main.bcf" 1779500129.95053 108053 92d793237121c8444051d54a8bc8b79c "pdflatex"
+["biber main"] 1778279275.21411 "main.bcf" "main.bbl" "main" 1779500155.29137 0
+  "main.bcf" 1779500155.22315 108053 92d793237121c8444051d54a8bc8b79c "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1779500129.42268 "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" "main.pdf" "main" 1779500130.03458 2
+["pdflatex"] 1779500154.642 "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" "main.pdf" "main" 1779500155.29159 2
   "../programs/figs/Aiyagari_Lorenz.png" 0 -1 0 ""
   "../programs/figs/Aiyagari_PolicyFunction.png" 0 -1 0 ""
   "../programs/figs/Aiyagari_ValueFunction.png" 0 -1 0 ""
@@ -13,7 +13,7 @@
   "../programs/figs/Phi_Dist_graph.png" 0 -1 0 ""
   "../programs/figs/Policy_fxn_graph.png" 0 -1 0 ""
   "../programs/figs/Value_Function_graph.png" 0 -1 0 ""
-  "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" 1779500128.63177 15458 18cdfc105dadc6903b796ee2603b304a ""
+  "/Users/camillebergeron/Documents/GitHub/Econ527/PS3_Bergeron/report/main.tex" 1779500154.42693 15458 18cdfc105dadc6903b796ee2603b304a ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -129,10 +129,10 @@
   "/Users/camillebergeron/Library/TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1751936044 443544 93ae5da40de604dfa8ff68c2a7f0a089 ""
   "/Users/camillebergeron/Library/TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1751936097 2244980 bfb39c62918290b12514fd9fd097502f ""
   "/Users/camillebergeron/Library/TinyTeX/texmf.cnf" 1745594431.81592 708 85fd07691b6294ba94c59dbc62380410 ""
-  "main.aux" 1779500129.94939 5941 d07eb839654ae886edce031644e78f7b "pdflatex"
+  "main.aux" 1779500155.22183 5941 d07eb839654ae886edce031644e78f7b "pdflatex"
   "main.bbl" 1778279279.84511 0 d41d8cd98f00b204e9800998ecf8427e "biber main"
-  "main.out" 1779500129.94998 1407 4a8c9f152b1c567cad1f2e35e0609ed1 "pdflatex"
-  "main.tex" 1779500128.63177 15458 18cdfc105dadc6903b796ee2603b304a ""
+  "main.out" 1779500155.2225 1407 4a8c9f152b1c567cad1f2e35e0609ed1 "pdflatex"
+  "main.tex" 1779500154.42693 15458 18cdfc105dadc6903b796ee2603b304a ""
   (generated)
   "main.aux"
   "main.bcf"

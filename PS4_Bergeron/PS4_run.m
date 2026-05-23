@@ -6,7 +6,7 @@
 
 
 %% Questiomn 1: Hugget Model
-run('programs/PS4_hugget.m'); % run Howard policy improvement code
+run('programs/PS4_hugget.m'); % run Hugget
 
 %% Quesion 2: Aiyagari
-run('programs/PS4_aiyagari.m'); % run Endogenous Grid Method code
+run('programs/PS4_aiyagari.m'); % run Aiyagari

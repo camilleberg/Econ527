@@ -8,24 +8,6 @@ clear; clc; close all;
 
 %% Setting up Problem
 
-polynomial_grid = @(a_min, a_max, n_a, curve) ...
-    a_min + (a_max - a_min) * linspace(0, 1, n_a) .^ curve;
-
-% ── Utilty function ──────────────────────────────────────────────────────────────────
-function u = u_fxn(c, Params)
-
-    gamma = Params.gamma;
-    u        = -Inf(size(c));       % default: -Inf for c <= 0
-    pos      = c > 0;
-    u(pos)   = (c(pos).^(1 - gamma)) / (1 - gamma);
-end
-
-function c = u_prime_inv(mu, Params)
-% c = u_prime_inv(mu, Params)
-    c = mu .^ (-1 / Params.gamma);
-end
-
-
 % ── Inputs──────────────────────────────────────────────────────────────────
 
 % 1. Defining the utility function 
@@ -43,15 +25,33 @@ Params.max_iter = 10000;
 [z_grid, z_prob] = rouwenhorst(Params.rho, Params.sigma, Params.n_z); % discretized income grid and transition probabilities using Rouwenhorst's method
 disp('Transition probabilities:'); disp(z_prob);
 
+% calculating the income states and distribution
+income_grid = exp(z_grid); % income states
+earnings_dist = mc_invdist(z_prob); % income distribution                      
+expected_earnings = income_grid' * earnings_dist; % expected earnins           
+
+
 % setting grid parameters
-Params.a_min = -mean(exp(z_grid)); % the mean of income 
-Params.a_max = mean(exp(z_grid)) * 50; % 50 times that 
+Params.a_min = -expected_earnings; % the mean of income 
+Params.a_max = expected_earnings * 50; % 50 times that 
 Params.curve = 2; % curvature parameter
 Params.n_a = 150; % number of welath grid points 
+Params.n_af = 150;
 
 % creating a_next_grid because EGM
-a_next_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve)';
-a_fine_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve)';
+a_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_a, Params.curve);
+a_fine_grid = polynomial_grid(Params.a_min, Params.a_max, Params.n_af, Params.curve);
+
+%% Functions
+% ── polynomial grid ──────────────────────────────────────────────────────────────────
+polynomial_grid = @(a_min, a_max, n_a, curve) ...
+    a_min + (a_max - a_min) * linspace(0, 1, n_a) .^ curve;
+
+% ── Utilty function ──────────────────────────────────────────────────────────────────
+u_fxn = @(c) c.^(1-Params.gamma)/(1-Params.gamma); 
+
+% ── derivatove of the inverse ──────────────────────────────────────────────────────────────────
+u_prime_inv = @(mu) mu .^ (-1 / Params.gamma);
 
 %% Caluclating Equilibrium interest Rate
 
@@ -72,11 +72,10 @@ if isfile('results/hugget_r_star.mat')
     fprintf('\nEquilibrium r* = %.6f\n', r_star);
 else
     disp('File not found, calculating equilibrium interest rate distribution...')
-    tic;
-
-    r_star = bisection(r_low, r_high, Params, z_grid, z_prob, ...
-    @u_fxn, @u_prime_inv, a_next_grid, a_fine_grid);
-
+    opts = optimset('Display','iter');
+    r_star = fminbnd(@(r) f_nad(r, z_grid, z_prob, u_fxn, u_prime_inv, ...
+                           Params, a_grid, a_fine_grid)^2, r_low, r_high, opts);
+    fprintf('\nEquilibrium r* = %.6f\n', r_star);
     save('results/hugget_r_star.mat', 'r_star')
 end
 
@@ -90,20 +89,20 @@ Params.r = r_star;
 if isfile('results/hugget_model.mat')
     disp('File exists and skipping hugget model calculation...');
     disp('Loading file instead...');
-    load('results/hugget_model.mat', 'v_fxn', 'policy_fxn', 'phi_dist', 'net_assets');
+    load('results/hugget_model.mat', 'V_grid', 'policy_fxn', 'phi_dist', 'net_assets');
     disp('Loaded hugget model');
 else
     disp('File not found, calculating hugget model...')
     tic;
 
     tic;
-    [v_fxn, policy_fxn, phi_dist, net_assets] = f_spe(z_grid, z_prob, @u_fxn, @u_prime_inv, ...
-        Params, a_next_grid, a_fine_grid);
+    [V_grid, policy_fxn, phi_dist, net_assets] = f_spe(r_star, z_grid, z_prob, u_fxn, u_prime_inv, ...
+        Params, a_grid, a_fine_grid);
     time = toc;
 
-    fprintf('Took %.4d seconds to converge', time)
+    fprintf('Took %.4f seconds to converge', time)
 
-    save('results/hugget_model.mat', 'v_fxn', 'policy_fxn', 'phi_dist', 'net_assets');
+    save('results/hugget_model.mat', 'V_grid', 'policy_fxn', 'phi_dist', 'net_assets');
 end
 
 %% Plotting the variables 
@@ -115,7 +114,7 @@ end
 % value function
 fig_value = figure;
 theme(fig_value, "light");
-plot(a_fine_grid, v_fxn, 'LineWidth', 2);
+plot(a_fine_grid, V_grid', 'LineWidth', 2);
 
 xlabel('Assets a');
 ylabel('Value Function');
