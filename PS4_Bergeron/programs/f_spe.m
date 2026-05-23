@@ -83,10 +83,11 @@ for iter = 1:Params.max_iter
         a_grid(1)) + Params.beta*EV(iz,1);
    end
 
-   % Check for convergence
+   % Check for convergence — use (1-beta)-scaled tolerance to match level of V
+   tol = (1 - Params.beta) * 1e-4;
    error = max(max(abs(V_grid - V_init)));  % disp(dif)
    
-   if error < Params.e_stop
+   if error < tol
       break
    end
    

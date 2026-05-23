@@ -5,8 +5,9 @@
 % Due: May 22, 2026
 
 
-%% Questiomn 1: Hugget Model
-run('programs/PS4_hugget.m'); % run Hugget
+%% Questiomn 2: Hugget Model
+run('programs/PS4_huggett.m'); % run Hugget
 
-%% Quesion 2: Aiyagari
+%% Quesion 3: Aiyagari
 run('programs/PS4_aiyagari.m'); % run Aiyagari
+
